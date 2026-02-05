@@ -1,34 +1,34 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   /* Warm, cozy palette for Bookies */
-  --color-cream-50: #FFFDF9;
-  --color-cream-100: #FFF8F0;
-  --color-cream-200: #F5E6D3;
-  --color-cream-300: #E8D4BE;
-  --color-cream-400: #D4BFA6;
-  --color-cream-500: #C4A882;
+  --color-cream-50: #fffdf9;
+  --color-cream-100: #fff8f0;
+  --color-cream-200: #f5e6d3;
+  --color-cream-300: #e8d4be;
+  --color-cream-400: #d4bfa6;
+  --color-cream-500: #c4a882;
 
-  --color-wood-100: #D4C4A8;
-  --color-wood-200: #B8A07A;
-  --color-wood-300: #9C7C52;
-  --color-wood-400: #7A5C3C;
-  --color-wood-500: #5C4033;
-  --color-wood-600: #3D2914;
+  --color-wood-100: #d4c4a8;
+  --color-wood-200: #b8a07a;
+  --color-wood-300: #9c7c52;
+  --color-wood-400: #7a5c3c;
+  --color-wood-500: #5c4033;
+  --color-wood-600: #3d2914;
 
-  --color-warm-green: #7A9B76;
-  --color-warm-amber: #C4956A;
-  --color-warm-brown: #8B6F47;
+  --color-warm-green: #7a9b76;
+  --color-warm-amber: #c4956a;
+  --color-warm-brown: #8b6f47;
 
   /* Semantic colors */
-  --color-background: #FFF8F0;
-  --color-foreground: #3D2914;
-  --color-muted: #9C7C52;
-  --color-accent: #C4956A;
+  --color-background: #fff8f0;
+  --color-foreground: #3d2914;
+  --color-muted: #9c7c52;
+  --color-accent: #c4956a;
 
   /* Typography */
   --font-sans: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  --font-serif: Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-serif: Georgia, Cambria, 'Times New Roman', Times, serif;
 
   /* Border radius */
   --radius-card: 12px;

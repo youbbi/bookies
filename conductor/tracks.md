@@ -4,5 +4,6 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-## [ ] Track: Build Bookies MVP - A trusted book lending platform with discovery, personal bookshelves, friend circles, and borrow requests
-*Link: [./tracks/bookies_mvp_20260205/](./tracks/bookies_mvp_20260205/)*
+## [~] Track: Build Bookies MVP - A trusted book lending platform with discovery, personal bookshelves, friend circles, and borrow requests
+
+_Link: [./tracks/bookies_mvp_20260205/](./tracks/bookies_mvp_20260205/)_
