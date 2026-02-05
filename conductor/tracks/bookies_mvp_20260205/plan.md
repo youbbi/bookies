@@ -8,7 +8,7 @@ Track ID: `bookies_mvp_20260205`
 
 ### 1.1 Project Setup
 - [x] Task: Initialize React + Vite + TypeScript project with PWA plugin [74b381a]
-- [ ] Task: Configure Tailwind CSS with custom warm color palette
+- [x] Task: Configure Tailwind CSS with custom warm color palette [4cf636d]
 - [ ] Task: Set up ESLint, Prettier, and Husky pre-commit hooks
 - [ ] Task: Create base folder structure (components, pages, hooks, lib, types)
 - [ ] Task: Configure Vitest and React Testing Library
