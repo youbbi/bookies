@@ -7,7 +7,7 @@ Track ID: `bookies_mvp_20260205`
 ## Phase 1: Personal Bookshelf
 
 ### 1.1 Project Setup
-- [ ] Task: Initialize React + Vite + TypeScript project with PWA plugin
+- [x] Task: Initialize React + Vite + TypeScript project with PWA plugin [74b381a]
 - [ ] Task: Configure Tailwind CSS with custom warm color palette
 - [ ] Task: Set up ESLint, Prettier, and Husky pre-commit hooks
 - [ ] Task: Create base folder structure (components, pages, hooks, lib, types)
