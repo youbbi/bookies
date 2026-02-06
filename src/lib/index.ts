@@ -1,2 +1,3 @@
 // Re-export all library utilities from this file
-// Example: export { supabase } from './supabase'
+export { supabase } from './supabase'
+export type { Tables, InsertTables, UpdateTables } from './supabase'
