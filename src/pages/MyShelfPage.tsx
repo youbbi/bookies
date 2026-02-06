@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuthContext } from '@/contexts/AuthContext'
 import { TreeBookshelf } from '@/components/TreeBookshelf'
+import { AppHeader } from '@/components/AppHeader'
 import { getUserBooks } from '@/lib/bookshelf'
 import type { UserBookWithBook } from '@/types'
 
@@ -70,8 +71,11 @@ export function MyShelfPage() {
   }
 
   // Show bookshelf with user's books
+  const displayName = user.user_metadata?.full_name || user.email?.split('@')[0] || 'Utilisateur'
+
   return (
     <div className="h-screen overflow-hidden relative">
+      <AppHeader displayName={displayName} />
       <TreeBookshelf
         books={books}
         onBookClick={(book) => console.log('Clicked:', book.book.title)}
