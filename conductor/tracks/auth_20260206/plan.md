@@ -48,7 +48,7 @@ Track ID: `auth_20260206`
 
 ---
 
-## Phase 3: Protected Routes & Integration
+## Phase 3: Protected Routes & Integration [checkpoint: 2c5f82f]
 
 ### 3.1 Route Protection
 
@@ -63,4 +63,4 @@ Track ID: `auth_20260206`
 - [x] Task: Apply ProtectedRoute to My Shelf and other protected pages [9d640c3]
 - [x] Task: Write integration tests for full auth flow [9d640c3]
 
-- [x] Task: Conductor - User Manual Verification 'Phase 3: Protected Routes & Integration' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Protected Routes & Integration' (Protocol in workflow.md) [2c5f82f]
