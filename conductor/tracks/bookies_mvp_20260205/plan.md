@@ -41,12 +41,12 @@ Track ID: `bookies_mvp_20260205`
 
 ### 1.5 Barcode Scanning
 
-- [ ] Task: Integrate barcode scanning library (quagga2 or similar)
-- [ ] Task: Build BarcodeScannerModal component
-- [ ] Task: Connect barcode scan result to Open Library ISBN lookup
-- [ ] Task: Write tests for barcode scanning flow
+- [x] Task: Integrate barcode scanning library (quagga2) [fe659a2]
+- [x] Task: Build BarcodeScannerModal component [fe659a2]
+- [x] Task: Connect barcode scan result to Open Library ISBN lookup [fe659a2]
+- [x] Task: Write tests for barcode scanning flow [fe659a2]
 
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Personal Bookshelf' (Protocol in workflow.md)
+- [~] Task: Conductor - User Manual Verification 'Phase 1: Personal Bookshelf' (Protocol in workflow.md)
 
 ---
 
