@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuthContext } from '@/contexts/AuthContext'
 import { TreeBookshelf } from '@/components/TreeBookshelf'
+import { BookActionModal } from '@/components'
 import { AppHeader } from '@/components/AppHeader'
-import { getUserBooks } from '@/lib/bookshelf'
+import { getUserBooks, removeBookFromShelf } from '@/lib/bookshelf'
 import type { UserBookWithBook } from '@/types'
 
 export function MyShelfPage() {
@@ -11,6 +12,7 @@ export function MyShelfPage() {
   const [books, setBooks] = useState<UserBookWithBook[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [selectedBook, setSelectedBook] = useState<UserBookWithBook | null>(null)
 
   useEffect(() => {
     if (!user) {
@@ -33,6 +35,11 @@ export function MyShelfPage() {
 
     fetchBooks()
   }, [user])
+
+  const handleRemoveBook = useCallback(async (userBookId: string) => {
+    await removeBookFromShelf(userBookId)
+    setBooks((prev) => prev.filter((b) => b.id !== userBookId))
+  }, [])
 
   // Show loading while checking auth
   if (authLoading || (loading && user)) {
@@ -76,14 +83,17 @@ export function MyShelfPage() {
   return (
     <div className="h-screen overflow-hidden relative">
       <AppHeader displayName={displayName} />
-      <TreeBookshelf
-        books={books}
-        onBookClick={(book) => console.log('Clicked:', book.book.title)}
-      />
+      <TreeBookshelf books={books} onBookClick={(book) => setSelectedBook(book)} />
       <div className="tree-bookshelf__overlay">
         <h1 className="tree-bookshelf__title">Bookies</h1>
         <p className="tree-bookshelf__subtitle">Partagez vos livres avec vos proches</p>
       </div>
+
+      <BookActionModal
+        book={selectedBook}
+        onClose={() => setSelectedBook(null)}
+        onRemove={handleRemoveBook}
+      />
     </div>
   )
 }

@@ -72,3 +72,13 @@ export async function signInWithGoogle(): Promise<AuthResult> {
 
   return { success: true }
 }
+
+/**
+ * Signs out the current user.
+ *
+ * @returns Promise with error if sign out failed
+ */
+export async function signOut(): Promise<{ error: Error | null }> {
+  const { error } = await supabase.auth.signOut()
+  return { error }
+}
