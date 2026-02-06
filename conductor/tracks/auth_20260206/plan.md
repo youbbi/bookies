@@ -27,7 +27,7 @@ Track ID: `auth_20260206`
 ### 2.1 Sign-In Page
 
 - [x] Task: Build SignInPage with email input and "Send magic link" button [a1e436d]
-- [ ] Task: Add "Continue with Google" OAuth button to SignInPage
+- [x] Task: Add "Continue with Google" OAuth button to SignInPage [0904d33]
 - [ ] Task: Add loading and success states (email sent confirmation)
 - [ ] Task: Write tests for SignInPage component
 
