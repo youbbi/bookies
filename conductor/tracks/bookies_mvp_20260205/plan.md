@@ -16,7 +16,7 @@ Track ID: `bookies_mvp_20260205`
 
 ### 1.2 Supabase Setup
 
-- [ ] Task: Create Supabase project and configure environment variables
+- [x] Task: Create Supabase project and configure environment variables [3b0b444]
 - [ ] Task: Design and create database schema (users, books, user_books)
 - [ ] Task: Set up Row Level Security policies for user_books table
 - [ ] Task: Create Supabase client utility with TypeScript types
