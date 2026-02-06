@@ -54,20 +54,39 @@ export interface Database {
         Row: Profile
         Insert: Omit<Profile, 'created_at' | 'updated_at'>
         Update: Partial<Omit<Profile, 'id' | 'created_at' | 'updated_at'>>
+        Relationships: []
       }
       books: {
         Row: Book
         Insert: Omit<Book, 'id' | 'created_at' | 'updated_at'>
         Update: Partial<Omit<Book, 'id' | 'created_at' | 'updated_at'>>
+        Relationships: []
       }
       user_books: {
         Row: UserBook
         Insert: Omit<UserBook, 'id' | 'created_at' | 'updated_at'>
         Update: Partial<Omit<UserBook, 'id' | 'created_at' | 'updated_at'>>
+        Relationships: [
+          {
+            foreignKeyName: 'user_books_book_id_fkey'
+            columns: ['book_id']
+            referencedRelation: 'books'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'user_books_user_id_fkey'
+            columns: ['user_id']
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+        ]
       }
     }
+    Views: Record<string, never>
+    Functions: Record<string, never>
     Enums: {
       loan_status: LoanStatus
     }
+    CompositeTypes: Record<string, never>
   }
 }
