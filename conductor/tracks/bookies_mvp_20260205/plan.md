@@ -25,7 +25,7 @@ Track ID: `bookies_mvp_20260205`
 
 - [x] Task: Create Open Library API service (search by title/author, lookup by ISBN) [f99aa25]
 - [x] Task: Build BookSearchModal component with search input and results list [ba622ff]
-- [ ] Task: Build BookCard component with cover, title, author, and status badge
+- [x] Task: Build BookCard component with cover, title, author, and status badge [9f7f5fb]
 - [ ] Task: Implement add book to shelf functionality (insert to user_books)
 - [ ] Task: Write tests for Open Library API service
 - [ ] Task: Write tests for BookSearchModal component
