@@ -28,7 +28,7 @@ Track ID: `bookies_mvp_20260205`
 - [x] Task: Build BookCard component with cover, title, author, and status badge [9f7f5fb]
 - [x] Task: Implement add book to shelf functionality (insert to user_books) [fbabf83]
 - [x] Task: Write tests for Open Library API service [44fb062]
-- [ ] Task: Write tests for BookSearchModal component
+- [x] Task: Write tests for BookSearchModal component [6098635]
 
 ### 1.4 Bookshelf Display
 
