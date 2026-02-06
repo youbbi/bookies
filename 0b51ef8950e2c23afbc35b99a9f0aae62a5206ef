@@ -1,0 +1,15 @@
+Task: Create useAuth hook exposing user, signIn, signOut, loading
+Task: Write tests for useAuth hook
+Track: auth_20260206
+
+Summary:
+- Created useAuth hook combining context state with auth actions
+- Exposes user, session, loading, isAuthenticated from AuthContext
+- Provides signInWithMagicLink, signInWithGoogle from auth service
+- Implements signOut using supabase.auth.signOut
+- 11 tests with 100% coverage (TDD approach)
+
+Files created:
+- src/hooks/useAuth.ts - Hook implementation
+- src/hooks/useAuth.test.ts - 11 tests, 100% coverage
+- src/hooks/index.ts - Updated exports
