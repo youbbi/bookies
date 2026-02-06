@@ -1,6 +1,11 @@
 import { render, screen } from '@testing-library/react'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import App from './App'
+
+// Mock the SVG import
+vi.mock('@/assets/tree-bookshelf.svg', () => ({
+  default: '/mock-tree.svg',
+}))
 
 describe('App', () => {
   it('renders the app title', () => {
@@ -13,8 +18,9 @@ describe('App', () => {
     expect(screen.getByText('Partagez vos livres avec vos proches')).toBeInTheDocument()
   })
 
-  it('renders the start button', () => {
+  it('renders the tree bookshelf', () => {
     render(<App />)
-    expect(screen.getByRole('button', { name: 'Commencer' })).toBeInTheDocument()
+    expect(screen.getByText('En cours')).toBeInTheDocument()
+    expect(screen.getByText('Mes coups de cœur')).toBeInTheDocument()
   })
 })

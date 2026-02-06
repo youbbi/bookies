@@ -18,7 +18,7 @@ Track ID: `auth_20260206`
 - [x] Task: Create useAuth hook exposing user, signIn, signOut, loading [0b51ef8]
 - [x] Task: Write tests for useAuth hook [0b51ef8]
 
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Auth Infrastructure' (Protocol in workflow.md)
+- [~] Task: Conductor - User Manual Verification 'Phase 1: Auth Infrastructure' (Protocol in workflow.md)
 
 ---
 

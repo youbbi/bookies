@@ -7,4 +7,5 @@ export type {
   UserBookWithBook,
   UserBookWithDetails,
   LoanStatus,
+  ReadingStatus,
 } from './database'

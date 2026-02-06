@@ -1,5 +1,7 @@
 import type { LoanStatus } from '@/types'
 
+type BookCardSize = 'default' | 'small' | 'shelf'
+
 interface BookCardProps {
   title: string
   author?: string | null
@@ -8,6 +10,31 @@ interface BookCardProps {
   lentToName?: string | null
   borrowedFromName?: string | null
   onClick?: () => void
+  size?: BookCardSize
+}
+
+const sizeConfig: Record<
+  BookCardSize,
+  { card: string; cover: string; info: string; showInfo: boolean }
+> = {
+  default: {
+    card: 'w-32',
+    cover: 'w-32 h-48',
+    info: 'w-32',
+    showInfo: true,
+  },
+  small: {
+    card: 'w-20',
+    cover: 'w-20 h-28',
+    info: 'w-20',
+    showInfo: true,
+  },
+  shelf: {
+    card: 'w-24',
+    cover: 'w-24 h-36',
+    info: 'w-24',
+    showInfo: false,
+  },
 }
 
 const statusConfig: Record<LoanStatus, { label: string; className: string }> = {
@@ -33,8 +60,10 @@ export function BookCard({
   lentToName,
   borrowedFromName,
   onClick,
+  size = 'default',
 }: BookCardProps) {
   const status = statusConfig[loanStatus]
+  const sizes = sizeConfig[size]
 
   const getStatusText = () => {
     if (loanStatus === 'lent' && lentToName) {
@@ -50,10 +79,12 @@ export function BookCard({
     <button
       type="button"
       onClick={onClick}
-      className="group flex flex-col w-32 text-left focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 rounded-lg"
+      className={`group flex flex-col ${sizes.card} text-left focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 rounded-lg`}
     >
       {/* Cover */}
-      <div className="relative w-32 h-48 rounded-lg overflow-hidden shadow-card group-hover:shadow-card-hover transition-shadow bg-cream-300">
+      <div
+        className={`relative ${sizes.cover} rounded-lg overflow-hidden shadow-card group-hover:shadow-card-hover transition-shadow bg-cream-300`}
+      >
         {coverUrl ? (
           <img
             src={coverUrl}
@@ -77,17 +108,19 @@ export function BookCard({
         </div>
       </div>
 
-      {/* Info */}
-      <div className="mt-2 w-32">
-        <h3 className="font-medium text-foreground text-sm truncate" title={title}>
-          {title}
-        </h3>
-        {author && (
-          <p className="text-xs text-muted truncate" title={author}>
-            {author}
-          </p>
-        )}
-      </div>
+      {/* Info - hidden for shelf size */}
+      {sizes.showInfo && (
+        <div className={`mt-2 ${sizes.info}`}>
+          <h3 className="font-medium text-foreground text-sm truncate" title={title}>
+            {title}
+          </h3>
+          {author && (
+            <p className="text-xs text-muted truncate" title={author}>
+              {author}
+            </p>
+          )}
+        </div>
+      )}
     </button>
   )
 }

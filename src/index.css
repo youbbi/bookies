@@ -21,7 +21,7 @@
   --color-warm-brown: #8b6f47;
 
   /* Semantic colors */
-  --color-background: #fff8f0;
+  --color-background: #a8a095;
   --color-foreground: #3d2914;
   --color-muted: #9c7c52;
   --color-accent: #c4956a;
@@ -69,5 +69,204 @@
   .btn-secondary {
     @apply bg-cream-200 text-wood-600 px-4 py-2 rounded-lg font-medium;
     @apply hover:bg-cream-300 transition-colors;
+  }
+
+  /* Tree Bookshelf Component */
+  .tree-bookshelf {
+    @apply w-full overflow-hidden;
+    height: 100vh;
+  }
+
+  .tree-bookshelf__overlay {
+    @apply absolute top-0 left-0 right-0 text-center pt-6 pointer-events-none z-20;
+  }
+
+  .tree-bookshelf__title {
+    @apply text-4xl font-serif text-cream-50 drop-shadow-lg;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  }
+
+  .tree-bookshelf__subtitle {
+    @apply text-sm text-cream-100 drop-shadow-md mt-1;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  }
+
+  .tree-bookshelf__container {
+    @apply relative w-full h-full flex items-center justify-center;
+  }
+
+  .tree-bookshelf__tree {
+    @apply w-full h-full object-cover select-none;
+    min-width: 100vw;
+    min-height: 100%;
+    object-position: center 20%;
+    transform: scale(1.6);
+  }
+
+  /* Tree Shelf Component */
+  .tree-shelf {
+    @apply absolute z-10;
+  }
+
+  .tree-shelf__surface {
+    @apply flex flex-col items-center;
+  }
+
+  .tree-shelf__label {
+    @apply text-sm font-serif font-medium text-wood-600 mb-2 px-3 py-1 rounded-full;
+    background: linear-gradient(to bottom, var(--color-cream-200), var(--color-cream-300));
+    box-shadow: 0 2px 4px rgba(61, 41, 20, 0.1);
+  }
+
+  .tree-shelf__books {
+    @apply flex gap-2 px-4 py-2 overflow-x-auto max-w-xs;
+    align-items: flex-end; /* Books sit ON the shelf */
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-wood-300) transparent;
+  }
+
+  .tree-shelf__books::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .tree-shelf__books::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .tree-shelf__books::-webkit-scrollbar-thumb {
+    @apply bg-wood-300 rounded-full;
+  }
+
+  .tree-shelf__empty {
+    @apply text-xs text-muted italic px-4 py-8;
+  }
+
+  .tree-shelf__edge {
+    @apply h-2 rounded-b-lg;
+    background: linear-gradient(to bottom, var(--color-wood-200), var(--color-wood-300));
+    box-shadow: 0 3px 6px rgba(61, 41, 20, 0.15);
+    width: calc(100% + 1rem);
+    margin-left: -0.5rem;
+  }
+
+  /* Shelf Positions - Centered shelves for the tree */
+  .tree-shelf--upper-center {
+    top: 54%;
+    left: 50%;
+    transform: translate(-50%, -100%);
+  }
+
+  .tree-shelf--lower-center {
+    top: 95%;
+    left: 50%;
+    transform: translate(-50%, -100%);
+  }
+
+  /* Tree Decorations */
+  .tree-decorations {
+    @apply absolute inset-0 pointer-events-none z-5;
+  }
+
+  .tree-decoration {
+    @apply absolute;
+  }
+
+  .tree-decoration--plant-top {
+    width: 40px;
+    height: 50px;
+    top: 12%;
+    right: 25%;
+  }
+
+  .tree-decoration--vine-left {
+    width: 60px;
+    height: 120px;
+    top: 30%;
+    left: 8%;
+  }
+
+  .tree-decoration--leaves-right {
+    width: 50px;
+    height: 40px;
+    top: 55%;
+    right: 5%;
+  }
+
+  .tree-decoration--succulent {
+    width: 30px;
+    height: 35px;
+    bottom: 20%;
+    left: 20%;
+  }
+
+  /* Responsive - Mobile */
+  @media (max-width: 767px) {
+    .tree-bookshelf {
+      height: auto;
+      min-height: 100vh;
+      overflow-y: auto;
+    }
+
+    .tree-bookshelf__container {
+      @apply flex-col;
+      min-height: 100vh;
+    }
+
+    .tree-bookshelf__tree {
+      @apply w-full;
+      height: auto;
+      min-height: 80vh;
+    }
+
+    .tree-shelf {
+      @apply relative;
+      position: relative !important;
+      top: auto !important;
+      left: auto !important;
+      right: auto !important;
+      bottom: auto !important;
+      transform: none !important;
+      @apply mb-6 w-full;
+    }
+
+    .tree-shelf__books {
+      @apply max-w-full justify-center flex-wrap;
+    }
+
+    .tree-decorations {
+      @apply hidden;
+    }
+  }
+
+  /* Animations */
+  @keyframes book-slide-in {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .tree-shelf__books > * {
+    animation: book-slide-in 0.3s ease-out backwards;
+  }
+
+  .tree-shelf__books > *:nth-child(1) {
+    animation-delay: 0.05s;
+  }
+  .tree-shelf__books > *:nth-child(2) {
+    animation-delay: 0.1s;
+  }
+  .tree-shelf__books > *:nth-child(3) {
+    animation-delay: 0.15s;
+  }
+  .tree-shelf__books > *:nth-child(4) {
+    animation-delay: 0.2s;
+  }
+  .tree-shelf__books > *:nth-child(5) {
+    animation-delay: 0.25s;
   }
 }

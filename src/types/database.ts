@@ -1,7 +1,9 @@
 // Database types matching the Supabase schema
-// These types are manually maintained to match supabase/migrations/001_initial_schema.sql
+// These types are manually maintained to match supabase/migrations/
 
 export type LoanStatus = 'available' | 'lent' | 'borrowed'
+
+export type ReadingStatus = 'to_read' | 'reading' | 'read'
 
 export interface Profile {
   id: string
@@ -29,6 +31,7 @@ export interface UserBook {
   user_id: string
   book_id: string
   loan_status: LoanStatus
+  reading_status: ReadingStatus
   lent_to_user_id: string | null
   borrowed_from_user_id: string | null
   created_at: string
@@ -86,6 +89,7 @@ export interface Database {
     Functions: Record<string, never>
     Enums: {
       loan_status: LoanStatus
+      reading_status: ReadingStatus
     }
     CompositeTypes: Record<string, never>
   }
