@@ -33,8 +33,8 @@ Track ID: `auth_20260206`
 
 ### 2.2 Display Name Setup
 
-- [~] Task: Create users profile table with display_name column and RLS policies
-- [ ] Task: Build DisplayNamePrompt component (shown on first sign-in)
+- [x] Task: Create users profile table with display_name column and RLS policies [001_initial_schema.sql]
+- [~] Task: Build DisplayNamePrompt component (shown on first sign-in)
 - [ ] Task: Implement save display name functionality
 - [ ] Task: Write tests for DisplayNamePrompt component
 
