@@ -1,0 +1,18 @@
+=== TASK SUMMARY ===
+Task: Build DisplayNamePrompt component (shown on first sign-in)
+Track: Authentication System (auth_20260206)
+
+CHANGES:
+- Created DisplayNamePrompt.tsx component
+- Created DisplayNamePrompt.test.tsx with 13 tests
+
+FEATURES IMPLEMENTED:
+- Display name input with 2-30 character validation
+- maxLength attribute for 30 char limit
+- Updates Supabase profiles table on submit
+- Loading state ("Enregistrement...")
+- Error handling with alert role
+- Calls onComplete callback after successful save
+- French UI per product guidelines
+
+TEST COVERAGE: 13 tests, all passing
