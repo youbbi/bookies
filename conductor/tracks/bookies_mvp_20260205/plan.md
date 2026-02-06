@@ -11,7 +11,7 @@ Track ID: `bookies_mvp_20260205`
 - [x] Task: Initialize React + Vite + TypeScript project with PWA plugin [74b381a]
 - [x] Task: Configure Tailwind CSS with custom warm color palette [4cf636d]
 - [x] Task: Set up ESLint, Prettier, and Husky pre-commit hooks [e8826f4]
-- [ ] Task: Create base folder structure (components, pages, hooks, lib, types)
+- [x] Task: Create base folder structure (components, pages, hooks, lib, types) [ee6c1f8]
 - [ ] Task: Configure Vitest and React Testing Library
 
 ### 1.2 Supabase Setup
