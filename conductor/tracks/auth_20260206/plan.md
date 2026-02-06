@@ -9,7 +9,7 @@ Track ID: `auth_20260206`
 ### 1.1 Supabase Auth Configuration
 
 - [x] Task: Configure Supabase Auth with magic link (email) provider [10f0ec1]
-- [ ] Task: Configure Supabase Auth with Google OAuth provider
+- [x] Task: Configure Supabase Auth with Google OAuth provider [ae06edd]
 - [ ] Task: Add auth callback route handler for OAuth redirects
 
 ### 1.2 Auth State Management
