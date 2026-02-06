@@ -51,3 +51,24 @@ export async function signInWithMagicLink(email: string): Promise<AuthResult> {
 
   return { success: true }
 }
+
+/**
+ * Signs in a user using Google OAuth.
+ * Redirects to Google for authentication, then back to the app.
+ *
+ * @returns Promise with success status and optional error message
+ */
+export async function signInWithGoogle(): Promise<AuthResult> {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: getRedirectUrl(),
+    },
+  })
+
+  if (error) {
+    return { success: false, error: error.message }
+  }
+
+  return { success: true }
+}
