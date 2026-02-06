@@ -40,11 +40,11 @@ Track ID: `auth_20260206`
 
 ### 2.3 Sign Out
 
-- [~] Task: Add sign out button to app header/menu
-- [ ] Task: Implement sign out flow (clear session, redirect to sign-in)
-- [ ] Task: Write tests for sign out functionality
+- [x] Task: Add sign out button to app header/menu [2f8009d]
+- [x] Task: Implement sign out flow (clear session, redirect to sign-in) [2f8009d]
+- [x] Task: Write tests for sign out functionality [2f8009d]
 
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Auth UI' (Protocol in workflow.md)
+- [~] Task: Conductor - User Manual Verification 'Phase 2: Auth UI' (Protocol in workflow.md)
 
 ---
 
