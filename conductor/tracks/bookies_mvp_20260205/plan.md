@@ -32,11 +32,12 @@ Track ID: `bookies_mvp_20260205`
 
 ### 1.4 Bookshelf Display
 
-- [ ] Task: Build BookShelf component (horizontal scrollable list of BookCards)
-- [ ] Task: Build MyShelfPage displaying user's books grouped by status
+- [x] Task: Build TreeBookshelf component (tree-styled shelves with BookCards) [6dcc7eb]
+- [x] Task: Fix shelf alignment to match background wooden shelves [9b5f903]
+- [x] Task: Add empty state for shelf ("Glissez un livre ici") [6dcc7eb]
+- [x] Task: Write tests for TreeBookshelf component [6dcc7eb]
+- [~] Task: Build MyShelfPage displaying user's books from Supabase
 - [ ] Task: Implement remove book from shelf functionality
-- [ ] Task: Add empty state for shelf ("Rien ici pour l'instant.")
-- [ ] Task: Write tests for BookShelf and MyShelfPage components
 
 ### 1.5 Barcode Scanning
 
