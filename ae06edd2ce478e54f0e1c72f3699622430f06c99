@@ -1,0 +1,15 @@
+Task: Configure Supabase Auth with Google OAuth provider
+Track: auth_20260206
+
+Summary:
+- Added signInWithGoogle function using Supabase Auth signInWithOAuth
+- Uses 'google' provider with callback redirect URL
+- Returns structured AuthResult with success/error
+
+Files modified:
+- src/lib/auth.ts - Added signInWithGoogle function
+- src/lib/auth.test.ts - Added 3 tests for Google OAuth
+
+Note: Google OAuth must be configured in Supabase dashboard:
+1. Enable Google provider in Authentication > Providers
+2. Add Google OAuth credentials (Client ID, Client Secret)
