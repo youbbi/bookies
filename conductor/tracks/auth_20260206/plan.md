@@ -14,7 +14,7 @@ Track ID: `auth_20260206`
 
 ### 1.2 Auth State Management
 
-- [ ] Task: Create AuthContext and AuthProvider with session state
+- [x] Task: Create AuthContext and AuthProvider with session state [75256e9]
 - [ ] Task: Create useAuth hook exposing user, signIn, signOut, loading
 - [ ] Task: Write tests for useAuth hook
 
