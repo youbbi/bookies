@@ -52,10 +52,10 @@ Track ID: `auth_20260206`
 
 ### 3.1 Route Protection
 
-- [ ] Task: Build ProtectedRoute wrapper component
-- [ ] Task: Implement redirect to sign-in for unauthenticated users
-- [ ] Task: Implement return-to-intended-page after sign-in
-- [ ] Task: Write tests for ProtectedRoute component
+- [x] Task: Build ProtectedRoute wrapper component [a96e56a]
+- [x] Task: Implement redirect to sign-in for unauthenticated users [a96e56a]
+- [x] Task: Implement return-to-intended-page after sign-in [a96e56a]
+- [x] Task: Write tests for ProtectedRoute component [a96e56a]
 
 ### 3.2 Integration
 
