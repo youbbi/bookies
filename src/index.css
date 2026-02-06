@@ -142,22 +142,18 @@
   }
 
   .tree-shelf__edge {
-    @apply h-2 rounded-b-lg;
-    background: linear-gradient(to bottom, var(--color-wood-200), var(--color-wood-300));
-    box-shadow: 0 3px 6px rgba(61, 41, 20, 0.15);
-    width: calc(100% + 1rem);
-    margin-left: -0.5rem;
+    display: none;
   }
 
   /* Shelf Positions - Centered shelves for the tree */
   .tree-shelf--upper-center {
-    top: 42%;
+    top: 47%;
     left: 50%;
     transform: translate(-50%, -100%);
   }
 
   .tree-shelf--lower-center {
-    top: 92%;
+    top: 83%;
     left: 50%;
     transform: translate(-50%, -100%);
   }
