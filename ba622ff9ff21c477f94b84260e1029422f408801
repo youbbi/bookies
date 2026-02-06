@@ -1,0 +1,9 @@
+Task: Build BookSearchModal component with search input and results list
+Section: 1.3 Book Search & Add
+Track: bookies_mvp_20260205
+
+Summary:
+- Created BookSearchModal component for searching books via Open Library API
+- Features: search input, loading spinner, error handling, results list with covers
+- All UI text in French as per product guidelines
+- Follows warm color palette (cream, wood tones)
