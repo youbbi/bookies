@@ -19,9 +19,15 @@ function ScannerContent({
   const [isInitialized, setIsInitialized] = useState(false)
 
   const handleDetected = useCallback(
-    (result: { codeResult?: { code?: string } }) => {
+    (result: { codeResult?: { code?: string; format?: string }; box?: unknown }) => {
+      console.log('=== BARCODE DETECTED ===')
+      console.log('Full result object:', JSON.stringify(result, null, 2))
+      console.log('Code:', result?.codeResult?.code)
+      console.log('Format:', result?.codeResult?.format)
+
       const code = result?.codeResult?.code
       if (code) {
+        console.log(`Detected barcode: "${code}" (format: ${result?.codeResult?.format})`)
         Quagga.stop()
         onScan(code)
         onClose()

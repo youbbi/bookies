@@ -93,16 +93,28 @@ export async function lookupByIsbn(isbn: string): Promise<OpenLibraryBook | null
   // Clean the ISBN (remove dashes and spaces)
   const cleanIsbn = isbn.replace(/[-\s]/g, '')
 
+  console.log('=== ISBN LOOKUP ===')
+  console.log('Original ISBN:', isbn)
+  console.log('Cleaned ISBN:', cleanIsbn)
+  console.log('ISBN length:', cleanIsbn.length)
+  console.log('API URL:', `${BASE_URL}/isbn/${cleanIsbn}.json`)
+
   const response = await fetch(`${BASE_URL}/isbn/${cleanIsbn}.json`)
+
+  console.log('Response status:', response.status)
+  console.log('Response ok:', response.ok)
 
   if (!response.ok) {
     if (response.status === 404) {
+      console.log('Book not found in Open Library for ISBN:', cleanIsbn)
       return null
     }
+    console.error('Open Library API error:', response.status)
     throw new Error(`Open Library ISBN lookup failed: ${response.status}`)
   }
 
   const data = await response.json()
+  console.log('Open Library response data:', JSON.stringify(data, null, 2))
 
   // The ISBN endpoint returns edition data, we need to get work info for authors
   let authors: string[] = []
