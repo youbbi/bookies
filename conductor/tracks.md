@@ -7,3 +7,9 @@ This file tracks all major tracks for the project. Each track has its own detail
 ## [~] Track: Build Bookies MVP - A trusted book lending platform with discovery, personal bookshelves, friend circles, and borrow requests
 
 _Link: [./tracks/bookies_mvp_20260205/](./tracks/bookies_mvp_20260205/)_
+
+---
+
+## [~] Track: Authentication System - Passwordless auth with magic link and Google OAuth
+
+_Link: [./tracks/auth_20260206/](./tracks/auth_20260206/)_
