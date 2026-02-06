@@ -1,0 +1,9 @@
+Task: Write tests for Open Library API service
+Section: 1.3 Book Search & Add
+Track: bookies_mvp_20260205
+
+Summary:
+- 18 test cases for openLibrary.ts
+- Tests getCoverUrl, getCoverUrlByIsbn, searchBooks, lookupByIsbn
+- Covers error handling, edge cases, data transformation
+- Mocks fetch for isolated unit testing
