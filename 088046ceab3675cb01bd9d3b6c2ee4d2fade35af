@@ -1,0 +1,23 @@
+Task: Create Supabase client utility with TypeScript types
+
+Summary:
+- Created typed Supabase client singleton
+- Added type helpers for database operations
+- Included environment variable validation
+
+Files created:
+- src/lib/supabase.ts - Supabase client with types
+- src/lib/supabase.test.ts - Tests for supabase module
+
+Files modified:
+- src/lib/index.ts - Export supabase client
+
+Type helpers:
+- Tables<T> - Get row type for a table
+- InsertTables<T> - Get insert type for a table
+- UpdateTables<T> - Get update type for a table
+
+Test coverage: 2 new tests (5 total)
+
+Why: Provides a type-safe Supabase client for all database
+operations throughout the application.
