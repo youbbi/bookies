@@ -34,13 +34,13 @@ Track ID: `auth_20260206`
 ### 2.2 Display Name Setup
 
 - [x] Task: Create users profile table with display_name column and RLS policies [001_initial_schema.sql]
-- [~] Task: Build DisplayNamePrompt component (shown on first sign-in)
-- [ ] Task: Implement save display name functionality
-- [ ] Task: Write tests for DisplayNamePrompt component
+- [x] Task: Build DisplayNamePrompt component (shown on first sign-in) [7236633]
+- [x] Task: Implement save display name functionality [7236633]
+- [x] Task: Write tests for DisplayNamePrompt component [7236633]
 
 ### 2.3 Sign Out
 
-- [ ] Task: Add sign out button to app header/menu
+- [~] Task: Add sign out button to app header/menu
 - [ ] Task: Implement sign out flow (clear session, redirect to sign-in)
 - [ ] Task: Write tests for sign out functionality
 
