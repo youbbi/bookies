@@ -12,7 +12,7 @@ Track ID: `bookies_mvp_20260205`
 - [x] Task: Configure Tailwind CSS with custom warm color palette [4cf636d]
 - [x] Task: Set up ESLint, Prettier, and Husky pre-commit hooks [e8826f4]
 - [x] Task: Create base folder structure (components, pages, hooks, lib, types) [ee6c1f8]
-- [ ] Task: Configure Vitest and React Testing Library
+- [x] Task: Configure Vitest and React Testing Library [9c3ac52]
 
 ### 1.2 Supabase Setup
 
