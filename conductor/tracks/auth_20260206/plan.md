@@ -4,7 +4,7 @@ Track ID: `auth_20260206`
 
 ---
 
-## Phase 1: Auth Infrastructure
+## Phase 1: Auth Infrastructure [checkpoint: 1505aae]
 
 ### 1.1 Supabase Auth Configuration
 
@@ -18,7 +18,7 @@ Track ID: `auth_20260206`
 - [x] Task: Create useAuth hook exposing user, signIn, signOut, loading [0b51ef8]
 - [x] Task: Write tests for useAuth hook [0b51ef8]
 
-- [~] Task: Conductor - User Manual Verification 'Phase 1: Auth Infrastructure' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Auth Infrastructure' (Protocol in workflow.md) [1505aae]
 
 ---
 
