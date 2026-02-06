@@ -37,7 +37,7 @@ Track ID: `bookies_mvp_20260205`
 - [x] Task: Add empty state for shelf ("Glissez un livre ici") [6dcc7eb]
 - [x] Task: Write tests for TreeBookshelf component [6dcc7eb]
 - [x] Task: Build MyShelfPage displaying user's books from Supabase [f4dedcb]
-- [ ] Task: Implement remove book from shelf functionality
+- [x] Task: Implement remove book from shelf functionality [ed21d1e]
 
 ### 1.5 Barcode Scanning
 
