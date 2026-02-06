@@ -1,0 +1,16 @@
+Task: Configure Supabase Auth with magic link (email) provider
+Track: auth_20260206
+
+Summary:
+- Created auth.ts service with signInWithMagicLink function
+- Uses Supabase Auth signInWithOtp for passwordless email authentication
+- Includes email validation (format check, empty check)
+- Trims whitespace from email input
+- Returns structured AuthResult with success/error
+
+Files created:
+- src/lib/auth.ts - Auth service implementation
+- src/lib/auth.test.ts - 6 tests, 100% coverage
+
+Note: Supabase dashboard configuration (enable Email provider with magic link)
+is a manual step that must be done in the Supabase project settings.
