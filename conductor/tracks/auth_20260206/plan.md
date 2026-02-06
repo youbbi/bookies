@@ -28,12 +28,12 @@ Track ID: `auth_20260206`
 
 - [x] Task: Build SignInPage with email input and "Send magic link" button [a1e436d]
 - [x] Task: Add "Continue with Google" OAuth button to SignInPage [0904d33]
-- [ ] Task: Add loading and success states (email sent confirmation)
-- [ ] Task: Write tests for SignInPage component
+- [x] Task: Add loading and success states (email sent confirmation) [a1e436d]
+- [x] Task: Write tests for SignInPage component [a1e436d]
 
 ### 2.2 Display Name Setup
 
-- [ ] Task: Create users profile table with display_name column and RLS policies
+- [~] Task: Create users profile table with display_name column and RLS policies
 - [ ] Task: Build DisplayNamePrompt component (shown on first sign-in)
 - [ ] Task: Implement save display name functionality
 - [ ] Task: Write tests for DisplayNamePrompt component

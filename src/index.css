@@ -151,13 +151,13 @@
 
   /* Shelf Positions - Centered shelves for the tree */
   .tree-shelf--upper-center {
-    top: 54%;
+    top: 42%;
     left: 50%;
     transform: translate(-50%, -100%);
   }
 
   .tree-shelf--lower-center {
-    top: 95%;
+    top: 62%;
     left: 50%;
     transform: translate(-50%, -100%);
   }
