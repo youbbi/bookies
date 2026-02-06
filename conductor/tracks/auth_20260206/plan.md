@@ -59,8 +59,8 @@ Track ID: `auth_20260206`
 
 ### 3.2 Integration
 
-- [ ] Task: Wrap app routes with AuthProvider
-- [ ] Task: Apply ProtectedRoute to My Shelf and other protected pages
-- [ ] Task: Write integration tests for full auth flow
+- [x] Task: Wrap app routes with AuthProvider [9d640c3]
+- [x] Task: Apply ProtectedRoute to My Shelf and other protected pages [9d640c3]
+- [x] Task: Write integration tests for full auth flow [9d640c3]
 
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Protected Routes & Integration' (Protocol in workflow.md)
+- [~] Task: Conductor - User Manual Verification 'Phase 3: Protected Routes & Integration' (Protocol in workflow.md)
