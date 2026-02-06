@@ -18,7 +18,7 @@ Track ID: `bookies_mvp_20260205`
 
 - [x] Task: Create Supabase project and configure environment variables [3b0b444]
 - [x] Task: Design and create database schema (users, books, user_books) [0b224c2]
-- [ ] Task: Set up Row Level Security policies for user_books table
+- [x] Task: Set up Row Level Security policies for user_books table [ac6d050]
 - [ ] Task: Create Supabase client utility with TypeScript types
 
 ### 1.3 Book Search & Add
