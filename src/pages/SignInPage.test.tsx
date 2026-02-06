@@ -7,9 +7,10 @@ import { SignInPage } from './SignInPage'
 // Mock the auth functions
 vi.mock('@/lib/auth', () => ({
   signInWithMagicLink: vi.fn(),
+  signInWithGoogle: vi.fn(),
 }))
 
-import { signInWithMagicLink } from '@/lib/auth'
+import { signInWithMagicLink, signInWithGoogle } from '@/lib/auth'
 
 const renderSignInPage = () => {
   return render(
@@ -149,6 +150,49 @@ describe('SignInPage', () => {
       await waitFor(() => {
         expect(screen.getByRole('alert')).toBeInTheDocument()
       })
+    })
+  })
+
+  describe('Google OAuth', () => {
+    it('renders Continue with Google button', () => {
+      renderSignInPage()
+
+      expect(screen.getByRole('button', { name: /continuer avec google/i })).toBeInTheDocument()
+    })
+
+    it('calls signInWithGoogle when Google button is clicked', async () => {
+      const user = userEvent.setup()
+      vi.mocked(signInWithGoogle).mockResolvedValueOnce({ error: null })
+
+      renderSignInPage()
+
+      const googleButton = screen.getByRole('button', { name: /continuer avec google/i })
+      await user.click(googleButton)
+
+      expect(signInWithGoogle).toHaveBeenCalled()
+    })
+
+    it('shows error when Google sign-in fails', async () => {
+      const user = userEvent.setup()
+      vi.mocked(signInWithGoogle).mockResolvedValueOnce({
+        error: { message: 'Google auth failed' },
+      })
+
+      renderSignInPage()
+
+      const googleButton = screen.getByRole('button', { name: /continuer avec google/i })
+      await user.click(googleButton)
+
+      await waitFor(() => {
+        expect(screen.getByRole('alert')).toBeInTheDocument()
+      })
+    })
+
+    it('renders a divider between email and Google options', () => {
+      renderSignInPage()
+
+      // The divider should have "ou" as standalone text
+      expect(screen.getByText('ou')).toBeInTheDocument()
     })
   })
 })
