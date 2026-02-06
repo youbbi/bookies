@@ -1,0 +1,9 @@
+Task: Implement add book to shelf functionality (insert to user_books)
+Section: 1.3 Book Search & Add
+Track: bookies_mvp_20260205
+
+Summary:
+- Created bookshelf service with addBookToShelf, removeBookFromShelf, getUserBooks, updateLoanStatus
+- Handles book record creation if not exists
+- Returns joined data with book details
+- French error messages per product guidelines
