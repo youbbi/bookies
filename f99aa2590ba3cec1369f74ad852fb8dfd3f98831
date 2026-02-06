@@ -1,0 +1,24 @@
+Task: Create Open Library API service (search by title/author, lookup by ISBN)
+
+Summary:
+- Created comprehensive Open Library API service
+- Supports search and ISBN lookup
+
+Functions created:
+- searchBooks: Search by title/author with configurable limit
+- lookupByIsbn: Get book details by ISBN
+- getCoverUrl: Get cover image by Open Library cover ID
+- getCoverUrlByIsbn: Get cover image by ISBN
+
+Types created:
+- OpenLibraryBook: Normalized book interface
+- OpenLibrarySearchResult: Raw API response type
+
+Files created:
+- src/lib/openLibrary.ts
+
+Files modified:
+- src/lib/index.ts (exports)
+
+Why: Provides book metadata and cover images for the bookshelf
+feature without requiring an API key.
