@@ -1,0 +1,9 @@
+Task: Build BookCard component with cover, title, author, and status badge
+Section: 1.3 Book Search & Add
+Track: bookies_mvp_20260205
+
+Summary:
+- Created reusable BookCard component for displaying books
+- Status badge with French labels (Disponible/Prêté/Emprunté)
+- Dynamic status text showing user name when lent/borrowed
+- Cover fallback, hover effects, focus accessibility
