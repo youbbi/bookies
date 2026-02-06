@@ -22,7 +22,7 @@ Track ID: `auth_20260206`
 
 ---
 
-## Phase 2: Auth UI
+## Phase 2: Auth UI [checkpoint: b115f80]
 
 ### 2.1 Sign-In Page
 
@@ -44,7 +44,7 @@ Track ID: `auth_20260206`
 - [x] Task: Implement sign out flow (clear session, redirect to sign-in) [2f8009d]
 - [x] Task: Write tests for sign out functionality [2f8009d]
 
-- [~] Task: Conductor - User Manual Verification 'Phase 2: Auth UI' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 2: Auth UI' (Protocol in workflow.md) [b115f80]
 
 ---
 
