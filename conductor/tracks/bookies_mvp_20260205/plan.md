@@ -36,7 +36,7 @@ Track ID: `bookies_mvp_20260205`
 - [x] Task: Fix shelf alignment to match background wooden shelves [9b5f903]
 - [x] Task: Add empty state for shelf ("Glissez un livre ici") [6dcc7eb]
 - [x] Task: Write tests for TreeBookshelf component [6dcc7eb]
-- [~] Task: Build MyShelfPage displaying user's books from Supabase
+- [x] Task: Build MyShelfPage displaying user's books from Supabase [f4dedcb]
 - [ ] Task: Implement remove book from shelf functionality
 
 ### 1.5 Barcode Scanning
