@@ -48,14 +48,14 @@ export function MyShelfPage() {
     async (barcode: string) => {
       if (!user) return
 
-      setScanMessage('Recherche du livre...')
+      setScanMessage(`Code: ${barcode} - Recherche...`)
 
       try {
         const book = await lookupByIsbn(barcode)
 
         if (!book) {
-          setScanMessage('Livre non trouvé pour ce code-barres')
-          setTimeout(() => setScanMessage(null), 3000)
+          setScanMessage(`Code "${barcode}" non trouvé. Essayez la recherche manuelle.`)
+          setTimeout(() => setScanMessage(null), 5000)
           return
         }
 
@@ -64,11 +64,11 @@ export function MyShelfPage() {
         const userBook = await addBookToShelf(user.id, book)
         setBooks((prev) => [userBook, ...prev])
 
-        setScanMessage(`"${book.title}" ajouté à votre bibliothèque!`)
+        setScanMessage(`"${book.title}" ajouté!`)
         setTimeout(() => setScanMessage(null), 3000)
-      } catch (err) {
-        setScanMessage(err instanceof Error ? err.message : "Erreur lors de l'ajout")
-        setTimeout(() => setScanMessage(null), 3000)
+      } catch {
+        setScanMessage(`Erreur pour code ${barcode}. Essayez la recherche manuelle.`)
+        setTimeout(() => setScanMessage(null), 5000)
       }
     },
     [user]
