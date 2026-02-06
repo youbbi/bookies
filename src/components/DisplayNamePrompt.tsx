@@ -27,7 +27,7 @@ export function DisplayNamePrompt({ userId, onComplete }: DisplayNamePromptProps
 
     const { error } = await supabase
       .from('profiles')
-      .update({ display_name: displayName.trim() })
+      .update({ display_name: displayName.trim() } as never)
       .eq('id', userId)
 
     if (error) {

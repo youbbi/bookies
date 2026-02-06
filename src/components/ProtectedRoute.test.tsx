@@ -41,7 +41,9 @@ describe('ProtectedRoute', () => {
     it('shows loading state while checking authentication', () => {
       vi.mocked(useAuth).mockReturnValue({
         user: null,
+        session: null,
         loading: true,
+        isAuthenticated: false,
         signInWithMagicLink: vi.fn(),
         signInWithGoogle: vi.fn(),
         signOut: vi.fn(),
@@ -57,7 +59,9 @@ describe('ProtectedRoute', () => {
     it('renders children when user is authenticated', () => {
       vi.mocked(useAuth).mockReturnValue({
         user: { id: 'user-123', email: 'test@example.com' } as User,
+        session: null,
         loading: false,
+        isAuthenticated: true,
         signInWithMagicLink: vi.fn(),
         signInWithGoogle: vi.fn(),
         signOut: vi.fn(),
@@ -73,7 +77,9 @@ describe('ProtectedRoute', () => {
     it('redirects to sign-in page when user is not authenticated', () => {
       vi.mocked(useAuth).mockReturnValue({
         user: null,
+        session: null,
         loading: false,
+        isAuthenticated: false,
         signInWithMagicLink: vi.fn(),
         signInWithGoogle: vi.fn(),
         signOut: vi.fn(),
@@ -88,7 +94,9 @@ describe('ProtectedRoute', () => {
     it('preserves the intended destination in redirect state', () => {
       vi.mocked(useAuth).mockReturnValue({
         user: null,
+        session: null,
         loading: false,
+        isAuthenticated: false,
         signInWithMagicLink: vi.fn(),
         signInWithGoogle: vi.fn(),
         signOut: vi.fn(),

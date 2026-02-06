@@ -22,11 +22,11 @@ export function SignInPage() {
     setFormState('loading')
     setErrorMessage(null)
 
-    const { error } = await signInWithMagicLink(email)
+    const result = await signInWithMagicLink(email)
 
-    if (error) {
+    if (result.error) {
       setFormState('error')
-      setErrorMessage(error.message)
+      setErrorMessage(result.error)
     } else {
       setFormState('success')
     }
@@ -36,11 +36,11 @@ export function SignInPage() {
     setGoogleState('loading')
     setErrorMessage(null)
 
-    const { error } = await signInWithGoogle()
+    const result = await signInWithGoogle()
 
-    if (error) {
+    if (result.error) {
       setGoogleState('error')
-      setErrorMessage(error.message)
+      setErrorMessage(result.error)
     }
     // On success, user will be redirected by Supabase
   }

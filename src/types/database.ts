@@ -50,7 +50,7 @@ export interface UserBookWithDetails extends UserBook {
 }
 
 // Database schema type for Supabase client
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       profiles: {
@@ -69,20 +69,7 @@ export interface Database {
         Row: UserBook
         Insert: Omit<UserBook, 'id' | 'created_at' | 'updated_at'>
         Update: Partial<Omit<UserBook, 'id' | 'created_at' | 'updated_at'>>
-        Relationships: [
-          {
-            foreignKeyName: 'user_books_book_id_fkey'
-            columns: ['book_id']
-            referencedRelation: 'books'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'user_books_user_id_fkey'
-            columns: ['user_id']
-            referencedRelation: 'profiles'
-            referencedColumns: ['id']
-          },
-        ]
+        Relationships: []
       }
     }
     Views: Record<string, never>

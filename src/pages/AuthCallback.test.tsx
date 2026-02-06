@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
+import type { User, AuthError } from '@supabase/supabase-js'
 import { AuthCallback } from './AuthCallback'
 
 // Mock react-router-dom's useNavigate
@@ -47,11 +48,12 @@ describe('AuthCallback', () => {
     vi.mocked(supabase.auth.getSession).mockResolvedValueOnce({
       data: {
         session: {
-          user: { id: '123', email: 'test@example.com' },
+          user: { id: '123', email: 'test@example.com' } as User,
           access_token: 'token',
           refresh_token: 'refresh',
           expires_in: 3600,
           token_type: 'bearer',
+          expires_at: Date.now() + 3600,
         },
       },
       error: null,
@@ -71,7 +73,7 @@ describe('AuthCallback', () => {
   it('navigates to sign-in on error', async () => {
     vi.mocked(supabase.auth.getSession).mockResolvedValueOnce({
       data: { session: null },
-      error: { message: 'Invalid token', name: 'AuthError', status: 400 },
+      error: { message: 'Invalid token', name: 'AuthError', status: 400 } as AuthError,
     })
 
     render(

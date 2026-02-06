@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
+import type { AuthError } from '@supabase/supabase-js'
 import { useAuth } from './useAuth'
 
 // Mock the auth context
@@ -145,7 +146,7 @@ describe('useAuth', () => {
 
     it('returns error when signOut fails', async () => {
       vi.mocked(supabase.auth.signOut).mockResolvedValueOnce({
-        error: { message: 'Network error', name: 'AuthError', status: 500 },
+        error: { message: 'Network error', name: 'AuthError', status: 500 } as AuthError,
       })
 
       const { result } = renderHook(() => useAuth())

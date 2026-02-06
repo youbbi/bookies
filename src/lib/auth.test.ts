@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import type { AuthError } from '@supabase/supabase-js'
 import { signInWithMagicLink, signInWithGoogle } from './auth'
 import { supabase } from './supabase'
 
@@ -25,7 +26,7 @@ describe('Auth Service', () => {
     it('calls supabase signInWithOtp with email', async () => {
       const mockSignInWithOtp = vi.mocked(supabase.auth.signInWithOtp)
       mockSignInWithOtp.mockResolvedValueOnce({
-        data: {},
+        data: { user: null, session: null },
         error: null,
       })
 
@@ -43,7 +44,7 @@ describe('Auth Service', () => {
     it('returns success when email is sent', async () => {
       const mockSignInWithOtp = vi.mocked(supabase.auth.signInWithOtp)
       mockSignInWithOtp.mockResolvedValueOnce({
-        data: {},
+        data: { user: null, session: null },
         error: null,
       })
 
@@ -56,8 +57,8 @@ describe('Auth Service', () => {
     it('returns error when supabase fails', async () => {
       const mockSignInWithOtp = vi.mocked(supabase.auth.signInWithOtp)
       mockSignInWithOtp.mockResolvedValueOnce({
-        data: {},
-        error: { message: 'Rate limit exceeded', name: 'AuthError', status: 429 },
+        data: { user: null, session: null },
+        error: { message: 'Rate limit exceeded', name: 'AuthError', status: 429 } as AuthError,
       })
 
       const result = await signInWithMagicLink('test@example.com')
@@ -85,7 +86,7 @@ describe('Auth Service', () => {
     it('trims whitespace from email', async () => {
       const mockSignInWithOtp = vi.mocked(supabase.auth.signInWithOtp)
       mockSignInWithOtp.mockResolvedValueOnce({
-        data: {},
+        data: { user: null, session: null },
         error: null,
       })
 
@@ -136,7 +137,11 @@ describe('Auth Service', () => {
       const mockSignInWithOAuth = vi.mocked(supabase.auth.signInWithOAuth)
       mockSignInWithOAuth.mockResolvedValueOnce({
         data: { provider: 'google', url: null },
-        error: { message: 'OAuth provider not configured', name: 'AuthError', status: 400 },
+        error: {
+          message: 'OAuth provider not configured',
+          name: 'AuthError',
+          status: 400,
+        } as AuthError,
       })
 
       const result = await signInWithGoogle()

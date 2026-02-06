@@ -86,7 +86,7 @@ describe('SignInPage', () => {
   describe('magic link submission', () => {
     it('calls signInWithMagicLink when form is submitted', async () => {
       const user = userEvent.setup()
-      vi.mocked(signInWithMagicLink).mockResolvedValueOnce({ error: null })
+      vi.mocked(signInWithMagicLink).mockResolvedValueOnce({ success: true })
 
       renderSignInPage()
 
@@ -118,7 +118,7 @@ describe('SignInPage', () => {
 
     it('shows success message after magic link is sent', async () => {
       const user = userEvent.setup()
-      vi.mocked(signInWithMagicLink).mockResolvedValueOnce({ error: null })
+      vi.mocked(signInWithMagicLink).mockResolvedValueOnce({ success: true })
 
       renderSignInPage()
 
@@ -136,7 +136,8 @@ describe('SignInPage', () => {
     it('shows error message when magic link fails', async () => {
       const user = userEvent.setup()
       vi.mocked(signInWithMagicLink).mockResolvedValueOnce({
-        error: { message: 'Rate limit exceeded' },
+        success: false,
+        error: 'Rate limit exceeded',
       })
 
       renderSignInPage()
@@ -162,7 +163,7 @@ describe('SignInPage', () => {
 
     it('calls signInWithGoogle when Google button is clicked', async () => {
       const user = userEvent.setup()
-      vi.mocked(signInWithGoogle).mockResolvedValueOnce({ error: null })
+      vi.mocked(signInWithGoogle).mockResolvedValueOnce({ success: true })
 
       renderSignInPage()
 
@@ -175,7 +176,8 @@ describe('SignInPage', () => {
     it('shows error when Google sign-in fails', async () => {
       const user = userEvent.setup()
       vi.mocked(signInWithGoogle).mockResolvedValueOnce({
-        error: { message: 'Google auth failed' },
+        success: false,
+        error: 'Google auth failed',
       })
 
       renderSignInPage()
