@@ -1,4 +1,6 @@
+import { Routes, Route } from 'react-router-dom'
 import { TreeBookshelf } from '@/components/TreeBookshelf'
+import { SignInPage, AuthCallback } from '@/pages'
 import type { UserBookWithBook } from '@/types'
 
 // Helper to create demo book
@@ -46,7 +48,7 @@ const demoBooks: UserBookWithBook[] = [
   createDemoBook('7', 'Candide', 'Voltaire', '8221579', 'read'),
 ]
 
-function App() {
+function HomePage() {
   return (
     <div className="h-screen overflow-hidden relative">
       <TreeBookshelf
@@ -58,6 +60,16 @@ function App() {
         <p className="tree-bookshelf__subtitle">Partagez vos livres avec vos proches</p>
       </div>
     </div>
+  )
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/sign-in" element={<SignInPage />} />
+      <Route path="/auth/callback" element={<AuthCallback />} />
+    </Routes>
   )
 }
 
