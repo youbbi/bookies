@@ -1,0 +1,21 @@
+Task: Set up Row Level Security policies for user_books table
+
+Summary:
+- Created comprehensive RLS policies for all three tables
+- Designed for public discovery while protecting user data
+
+Policies by table:
+- profiles: SELECT all, UPDATE own only
+- books: SELECT all, INSERT authenticated
+- user_books: SELECT all, INSERT/UPDATE/DELETE own only
+
+Security considerations:
+- Public browsing enabled (MVP requirement)
+- Data modification restricted to owners
+- Future: friend-based borrowing restrictions
+
+Files created:
+- supabase/migrations/002_rls_policies.sql
+
+Why: Implements security at the database level, ensuring users
+can only modify their own data while enabling public discovery.
