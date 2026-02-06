@@ -1,0 +1,14 @@
+Task: Add auth callback route handler for OAuth redirects
+Track: auth_20260206
+
+Summary:
+- Created AuthCallback page component
+- Handles OAuth and magic link redirect processing
+- Checks session via supabase.auth.getSession()
+- Redirects to / on success, /sign-in on failure
+- Installed react-router-dom for routing
+
+Files created:
+- src/pages/AuthCallback.tsx - Callback handler component
+- src/pages/AuthCallback.test.tsx - 4 tests, 100% coverage
+- src/pages/index.ts - Updated exports
