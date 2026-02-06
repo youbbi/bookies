@@ -1,2 +1,10 @@
 // Re-export all types from this file
-// Example: export type { Book, User } from './models'
+export type {
+  Database,
+  Profile,
+  Book,
+  UserBook,
+  UserBookWithBook,
+  UserBookWithDetails,
+  LoanStatus,
+} from './database'
