@@ -1,0 +1,23 @@
+Task: Design and create database schema (users, books, user_books)
+
+Summary:
+- Created initial SQL migration with three core tables
+- Added TypeScript types matching the database schema
+
+Tables created:
+- profiles: id, display_name, avatar_url, timestamps
+- books: id, open_library_id, isbn, title, author, cover_url, etc.
+- user_books: id, user_id, book_id, loan_status, loan relationships
+
+Features:
+- Auto-create profile trigger on auth.users insert
+- Loan status enum: available, lent, borrowed
+- Updated_at triggers for all tables
+- Foreign key relationships with cascade delete
+
+Files created:
+- supabase/migrations/001_initial_schema.sql
+- src/types/database.ts
+
+Why: Establishes the data model for the book lending platform,
+enabling user bookshelves and loan tracking.
