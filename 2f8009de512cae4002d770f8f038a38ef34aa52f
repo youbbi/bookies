@@ -1,0 +1,16 @@
+=== TASK SUMMARY ===
+Task: Add sign out button to app header/menu
+Track: Authentication System (auth_20260206)
+
+CHANGES:
+- Created AppHeader.tsx component
+- Created AppHeader.test.tsx with 5 tests
+
+FEATURES IMPLEMENTED:
+- Displays user display name
+- Sign out button ("Déconnexion")
+- Loading state while signing out
+- Navigates to /sign-in after successful sign out
+- Styled for overlay position on tree bookshelf background
+
+TEST COVERAGE: 5 tests, all passing
