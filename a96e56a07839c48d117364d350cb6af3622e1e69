@@ -1,0 +1,11 @@
+=== TASK SUMMARY ===
+Task: Build ProtectedRoute wrapper component
+Track: Authentication System (auth_20260206)
+
+FEATURES:
+- Loading state while checking authentication
+- Redirects to /sign-in when not authenticated
+- Preserves intended destination in location state
+- Renders children when authenticated
+
+TESTS: 4 tests, all passing
