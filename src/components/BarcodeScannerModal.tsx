@@ -78,6 +78,7 @@ function ScannerContent({
   onScan: (barcode: string) => void
 }) {
   const scannerRef = useRef<HTMLDivElement>(null)
+  const isStartedRef = useRef(false)
   const [error, setError] = useState<string | null>(null)
   const [isInitialized, setIsInitialized] = useState(false)
   const [warning, setWarning] = useState<string | null>(null)
@@ -139,6 +140,7 @@ function ScannerContent({
           return
         }
         setIsInitialized(true)
+        isStartedRef.current = true
         Quagga.start()
       }
     )
@@ -147,7 +149,10 @@ function ScannerContent({
 
     return () => {
       Quagga.offDetected(handleDetected)
-      Quagga.stop()
+      if (isStartedRef.current) {
+        Quagga.stop()
+        isStartedRef.current = false
+      }
     }
   }, [handleDetected])
 

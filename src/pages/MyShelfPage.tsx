@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuthContext } from '@/contexts/AuthContext'
 import { TreeBookshelf } from '@/components/TreeBookshelf'
-import { BookActionModal, BarcodeScannerModal } from '@/components'
+import { BookActionModal, BarcodeScannerModal, BookSearchModal } from '@/components'
 import { AppHeader } from '@/components/AppHeader'
 import { getUserBooks, removeBookFromShelf, addBookToShelf } from '@/lib/bookshelf'
 import { lookupByIsbn } from '@/lib/openLibrary'
@@ -15,6 +15,7 @@ export function MyShelfPage() {
   const [error, setError] = useState<string | null>(null)
   const [selectedBook, setSelectedBook] = useState<UserBookWithBook | null>(null)
   const [isScannerOpen, setIsScannerOpen] = useState(false)
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [scanMessage, setScanMessage] = useState<string | null>(null)
 
   useEffect(() => {
@@ -43,6 +44,15 @@ export function MyShelfPage() {
     await removeBookFromShelf(userBookId)
     setBooks((prev) => prev.filter((b) => b.id !== userBookId))
   }, [])
+
+  const handleAddBook = useCallback(
+    async (book: Parameters<typeof addBookToShelf>[1]) => {
+      if (!user) return
+      const userBook = await addBookToShelf(user.id, book)
+      setBooks((prev) => [userBook, ...prev])
+    },
+    [user]
+  )
 
   const handleBarcodeScan = useCallback(
     async (barcode: string) => {
@@ -134,33 +144,61 @@ export function MyShelfPage() {
         onScan={handleBarcodeScan}
       />
 
-      {/* Floating action button for scanner */}
-      <button
-        type="button"
-        onClick={() => setIsScannerOpen(true)}
-        className="fixed bottom-6 right-6 w-14 h-14 bg-accent hover:bg-accent/90 text-white rounded-full shadow-lg flex items-center justify-center transition-colors z-40"
-        aria-label="Scanner un livre"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={2}
-          stroke="currentColor"
-          className="w-6 h-6"
+      <BookSearchModal
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        onSelectBook={handleAddBook}
+      />
+
+      {/* Floating action buttons */}
+      <div className="fixed bottom-6 right-6 flex flex-col gap-3 z-40">
+        {/* Search button */}
+        <button
+          type="button"
+          onClick={() => setIsSearchOpen(true)}
+          className="w-14 h-14 bg-accent hover:bg-accent/90 text-white rounded-full shadow-lg flex items-center justify-center transition-colors"
+          aria-label="Rechercher un livre"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z"
-          />
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M13.5 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5z"
-          />
-        </svg>
-      </button>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+            className="w-6 h-6"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+        </button>
+
+        {/* Scanner button */}
+        <button
+          type="button"
+          onClick={() => setIsScannerOpen(true)}
+          className="w-14 h-14 bg-wood-500 hover:bg-wood-600 text-white rounded-full shadow-lg flex items-center justify-center transition-colors"
+          aria-label="Scanner un livre"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+            className="w-6 h-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z"
+            />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M13.5 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5z"
+            />
+          </svg>
+        </button>
+      </div>
 
       {/* Scan message toast */}
       {scanMessage && (
