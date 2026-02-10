@@ -8,24 +8,66 @@ interface BarcodeScannerModalProps {
 }
 
 /**
- * Validate if a code looks like a valid ISBN
- * ISBN-10: 10 digits (may end with X)
- * ISBN-13: 13 digits starting with 978 or 979
+ * Validate ISBN-13 checksum
+ * The check digit makes: sum of (digit * alternating 1,3) divisible by 10
  */
-function isValidIsbn(code: string): boolean {
+function isValidIsbn13Checksum(isbn: string): boolean {
+  if (isbn.length !== 13) return false
+
+  let sum = 0
+  for (let i = 0; i < 13; i++) {
+    const digit = parseInt(isbn[i], 10)
+    sum += digit * (i % 2 === 0 ? 1 : 3)
+  }
+
+  return sum % 10 === 0
+}
+
+/**
+ * Validate ISBN-10 checksum
+ * Sum of (digit * position) should be divisible by 11
+ * X represents 10 for the check digit
+ */
+function isValidIsbn10Checksum(isbn: string): boolean {
+  if (isbn.length !== 10) return false
+
+  let sum = 0
+  for (let i = 0; i < 10; i++) {
+    const char = isbn[i].toUpperCase()
+    const value = char === 'X' ? 10 : parseInt(char, 10)
+    sum += value * (10 - i)
+  }
+
+  return sum % 11 === 0
+}
+
+/**
+ * Validate if a code is a valid ISBN with correct checksum
+ * This catches misread barcodes where digits got scrambled
+ */
+function isValidIsbn(code: string): { valid: boolean; reason?: string } {
   const cleaned = code.replace(/[-\s]/g, '')
 
   // ISBN-13: 13 digits, starts with 978 or 979
   if (cleaned.length === 13 && /^\d{13}$/.test(cleaned)) {
-    return cleaned.startsWith('978') || cleaned.startsWith('979')
+    if (!cleaned.startsWith('978') && !cleaned.startsWith('979')) {
+      return { valid: false, reason: 'ISBN-13 doit commencer par 978 ou 979' }
+    }
+    if (!isValidIsbn13Checksum(cleaned)) {
+      return { valid: false, reason: 'Checksum invalide - code-barres mal lu, réessayez' }
+    }
+    return { valid: true }
   }
 
   // ISBN-10: 10 characters (9 digits + check digit which can be X)
   if (cleaned.length === 10 && /^\d{9}[\dX]$/i.test(cleaned)) {
-    return true
+    if (!isValidIsbn10Checksum(cleaned)) {
+      return { valid: false, reason: 'Checksum invalide - code-barres mal lu, réessayez' }
+    }
+    return { valid: true }
   }
 
-  return false
+  return { valid: false, reason: `Longueur invalide (${cleaned.length} chiffres)` }
 }
 
 function ScannerContent({
@@ -51,17 +93,16 @@ function ScannerContent({
       console.log('Length:', code?.length)
 
       if (code) {
-        if (isValidIsbn(code)) {
+        const validation = isValidIsbn(code)
+        if (validation.valid) {
           console.log('Valid ISBN detected:', code)
           Quagga.stop()
           onScan(code)
           onClose()
         } else {
           // Invalid ISBN - show warning but keep scanning
-          console.log('Invalid ISBN (wrong length/format):', code)
-          setWarning(
-            `Code "${code}" n'est pas un ISBN valide. Cherchez le code-barres ISBN (13 chiffres commençant par 978).`
-          )
+          console.log('Invalid ISBN:', code, '-', validation.reason)
+          setWarning(validation.reason || `Code "${code}" n'est pas un ISBN valide.`)
           // Clear warning after 3 seconds
           setTimeout(() => setWarning(null), 3000)
         }
