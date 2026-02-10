@@ -115,6 +115,9 @@ function ScannerContent({
   useEffect(() => {
     if (!scannerRef.current) return
 
+    // Track if this effect instance has been cleaned up (for React StrictMode)
+    let isCancelled = false
+
     Quagga.init(
       {
         inputStream: {
@@ -135,6 +138,9 @@ function ScannerContent({
         frequency: 10,
       },
       (err) => {
+        // Don't proceed if the effect was cleaned up while init was running
+        if (isCancelled) return
+
         if (err) {
           setError("Impossible d'accéder à la caméra. Veuillez autoriser l'accès.")
           return
@@ -148,6 +154,7 @@ function ScannerContent({
     Quagga.onDetected(handleDetected)
 
     return () => {
+      isCancelled = true
       Quagga.offDetected(handleDetected)
       if (isStartedRef.current) {
         Quagga.stop()

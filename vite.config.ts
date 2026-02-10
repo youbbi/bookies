@@ -4,6 +4,20 @@ import { VitePWA } from 'vite-plugin-pwa'
 import path from 'path'
 
 export default defineConfig({
+  server: {
+    proxy: {
+      '/api/openlibrary': {
+        target: 'https://openlibrary.org',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/openlibrary/, ''),
+      },
+      '/api/covers': {
+        target: 'https://covers.openlibrary.org',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/covers/, ''),
+      },
+    },
+  },
   plugins: [
     react(),
     VitePWA({

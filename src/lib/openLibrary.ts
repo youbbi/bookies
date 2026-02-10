@@ -1,8 +1,10 @@
 // Open Library API Service
 // Documentation: https://openlibrary.org/developers/api
 
-const BASE_URL = 'https://openlibrary.org'
-const COVERS_URL = 'https://covers.openlibrary.org'
+// Use proxy in development (but not in tests) to avoid CORS issues
+const useProxy = import.meta.env.DEV && import.meta.env.MODE !== 'test'
+const BASE_URL = useProxy ? '/api/openlibrary' : 'https://openlibrary.org'
+const COVERS_URL = useProxy ? '/api/covers' : 'https://covers.openlibrary.org'
 
 // Types for Open Library API responses
 export interface OpenLibrarySearchResult {
