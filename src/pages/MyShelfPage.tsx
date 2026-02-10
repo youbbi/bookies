@@ -48,8 +48,19 @@ export function MyShelfPage() {
   const handleAddBook = useCallback(
     async (book: Parameters<typeof addBookToShelf>[1]) => {
       if (!user) return
-      const userBook = await addBookToShelf(user.id, book)
-      setBooks((prev) => [userBook, ...prev])
+
+      setScanMessage(`Ajout de "${book.title}"...`)
+
+      try {
+        const userBook = await addBookToShelf(user.id, book)
+        setBooks((prev) => [userBook, ...prev])
+        setScanMessage(`"${book.title}" ajouté!`)
+        setTimeout(() => setScanMessage(null), 3000)
+      } catch (err) {
+        console.error('Error adding book:', err)
+        setScanMessage(`Erreur lors de l'ajout. Veuillez réessayer.`)
+        setTimeout(() => setScanMessage(null), 5000)
+      }
     },
     [user]
   )
