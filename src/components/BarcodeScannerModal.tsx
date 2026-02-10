@@ -7,6 +7,27 @@ interface BarcodeScannerModalProps {
   onScan: (barcode: string) => void
 }
 
+/**
+ * Validate if a code looks like a valid ISBN
+ * ISBN-10: 10 digits (may end with X)
+ * ISBN-13: 13 digits starting with 978 or 979
+ */
+function isValidIsbn(code: string): boolean {
+  const cleaned = code.replace(/[-\s]/g, '')
+
+  // ISBN-13: 13 digits, starts with 978 or 979
+  if (cleaned.length === 13 && /^\d{13}$/.test(cleaned)) {
+    return cleaned.startsWith('978') || cleaned.startsWith('979')
+  }
+
+  // ISBN-10: 10 characters (9 digits + check digit which can be X)
+  if (cleaned.length === 10 && /^\d{9}[\dX]$/i.test(cleaned)) {
+    return true
+  }
+
+  return false
+}
+
 function ScannerContent({
   onClose,
   onScan,
@@ -17,14 +38,33 @@ function ScannerContent({
   const scannerRef = useRef<HTMLDivElement>(null)
   const [error, setError] = useState<string | null>(null)
   const [isInitialized, setIsInitialized] = useState(false)
+  const [warning, setWarning] = useState<string | null>(null)
 
   const handleDetected = useCallback(
     (result: QuaggaJSResultObject) => {
       const code = result?.codeResult?.code
+      const format = result?.codeResult?.format
+
+      console.log('=== BARCODE DETECTED ===')
+      console.log('Code:', code)
+      console.log('Format:', format)
+      console.log('Length:', code?.length)
+
       if (code) {
-        Quagga.stop()
-        onScan(code)
-        onClose()
+        if (isValidIsbn(code)) {
+          console.log('Valid ISBN detected:', code)
+          Quagga.stop()
+          onScan(code)
+          onClose()
+        } else {
+          // Invalid ISBN - show warning but keep scanning
+          console.log('Invalid ISBN (wrong length/format):', code)
+          setWarning(
+            `Code "${code}" n'est pas un ISBN valide. Cherchez le code-barres ISBN (13 chiffres commençant par 978).`
+          )
+          // Clear warning after 3 seconds
+          setTimeout(() => setWarning(null), 3000)
+        }
       }
     },
     [onScan, onClose]
@@ -45,7 +85,9 @@ function ScannerContent({
           },
         },
         decoder: {
-          readers: ['ean_reader', 'ean_8_reader', 'upc_reader', 'upc_e_reader'],
+          // Focus on ISBN formats: EAN-13 (ISBN-13) and Code 39 (some ISBN-10)
+          // Removed EAN-8 as it's not used for ISBNs
+          readers: ['ean_reader'],
         },
         locate: true,
         frequency: 10,
@@ -84,10 +126,10 @@ function ScannerContent({
         {/* Header */}
         <div className="p-4 border-b border-cream-300">
           <h2 className="text-lg font-serif font-medium text-wood-600 text-center">
-            Scanner un code-barres
+            Scanner un code-barres ISBN
           </h2>
           <p className="text-sm text-muted text-center mt-1">
-            Pointez la caméra vers le code-barres ISBN du livre
+            Cherchez le code-barres à 13 chiffres commençant par 978 (généralement au dos du livre)
           </p>
         </div>
 
@@ -114,6 +156,13 @@ function ScannerContent({
           {error && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/50 p-4">
               <p className="text-white text-center">{error}</p>
+            </div>
+          )}
+
+          {/* Warning for invalid barcodes */}
+          {warning && !error && (
+            <div className="absolute bottom-2 left-2 right-2 bg-amber-500 text-white text-xs p-2 rounded">
+              {warning}
             </div>
           )}
         </div>
