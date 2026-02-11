@@ -1,25 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GoodReadsImportModal } from './GoodReadsImportModal'
-
-vi.mock('@/lib/goodreadsImport', () => ({
-  importGoodReadsLibrary: vi.fn(),
-}))
 
 vi.mock('@/lib/goodreads', () => ({
   isValidGoodReadsUrl: vi.fn(),
 }))
 
-import { importGoodReadsLibrary } from '@/lib/goodreadsImport'
 import { isValidGoodReadsUrl } from '@/lib/goodreads'
 
-const mockImport = vi.mocked(importGoodReadsLibrary)
 const mockIsValid = vi.mocked(isValidGoodReadsUrl)
 
 describe('GoodReadsImportModal', () => {
   const mockOnClose = vi.fn()
-  const mockOnComplete = vi.fn()
+  const mockOnStartImport = vi.fn()
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -31,8 +25,7 @@ describe('GoodReadsImportModal', () => {
       <GoodReadsImportModal
         isOpen={false}
         onClose={mockOnClose}
-        onComplete={mockOnComplete}
-        userId="user-1"
+        onStartImport={mockOnStartImport}
       />
     )
     expect(container).toBeEmptyDOMElement()
@@ -40,12 +33,7 @@ describe('GoodReadsImportModal', () => {
 
   it('renders modal with URL input when isOpen is true', () => {
     render(
-      <GoodReadsImportModal
-        isOpen={true}
-        onClose={mockOnClose}
-        onComplete={mockOnComplete}
-        userId="user-1"
-      />
+      <GoodReadsImportModal isOpen={true} onClose={mockOnClose} onStartImport={mockOnStartImport} />
     )
 
     expect(screen.getByText('Importer depuis GoodReads')).toBeInTheDocument()
@@ -55,12 +43,7 @@ describe('GoodReadsImportModal', () => {
 
   it('shows instructions text', () => {
     render(
-      <GoodReadsImportModal
-        isOpen={true}
-        onClose={mockOnClose}
-        onComplete={mockOnComplete}
-        userId="user-1"
-      />
+      <GoodReadsImportModal isOpen={true} onClose={mockOnClose} onStartImport={mockOnStartImport} />
     )
 
     expect(screen.getByText(/profil GoodReads/i)).toBeInTheDocument()
@@ -68,12 +51,7 @@ describe('GoodReadsImportModal', () => {
 
   it('disables import button when URL is empty', () => {
     render(
-      <GoodReadsImportModal
-        isOpen={true}
-        onClose={mockOnClose}
-        onComplete={mockOnComplete}
-        userId="user-1"
-      />
+      <GoodReadsImportModal isOpen={true} onClose={mockOnClose} onStartImport={mockOnStartImport} />
     )
 
     expect(screen.getByText('Importer')).toBeDisabled()
@@ -84,12 +62,7 @@ describe('GoodReadsImportModal', () => {
     mockIsValid.mockReturnValue(false)
 
     render(
-      <GoodReadsImportModal
-        isOpen={true}
-        onClose={mockOnClose}
-        onComplete={mockOnComplete}
-        userId="user-1"
-      />
+      <GoodReadsImportModal isOpen={true} onClose={mockOnClose} onStartImport={mockOnStartImport} />
     )
 
     const input = screen.getByPlaceholderText(/goodreads\.com/i)
@@ -103,12 +76,7 @@ describe('GoodReadsImportModal', () => {
     mockIsValid.mockReturnValue(true)
 
     render(
-      <GoodReadsImportModal
-        isOpen={true}
-        onClose={mockOnClose}
-        onComplete={mockOnComplete}
-        userId="user-1"
-      />
+      <GoodReadsImportModal isOpen={true} onClose={mockOnClose} onStartImport={mockOnStartImport} />
     )
 
     const input = screen.getByPlaceholderText(/goodreads\.com/i)
@@ -117,131 +85,51 @@ describe('GoodReadsImportModal', () => {
     expect(screen.getByText('Importer')).not.toBeDisabled()
   })
 
-  it('shows progress during import', async () => {
+  it('calls onStartImport with URL when import button is clicked', async () => {
     const user = userEvent.setup()
     mockIsValid.mockReturnValue(true)
 
-    // Simulate a slow import that calls onProgress
-    mockImport.mockImplementation(async (_userId, _url, onProgress) => {
-      onProgress?.(1, 3)
-      return { totalFound: 3, imported: 3, skipped: 0, failed: 0, errors: [] }
-    })
-
     render(
-      <GoodReadsImportModal
-        isOpen={true}
-        onClose={mockOnClose}
-        onComplete={mockOnComplete}
-        userId="user-1"
-      />
+      <GoodReadsImportModal isOpen={true} onClose={mockOnClose} onStartImport={mockOnStartImport} />
     )
 
     const input = screen.getByPlaceholderText(/goodreads\.com/i)
     await user.type(input, 'https://www.goodreads.com/user/show/12345')
     fireEvent.click(screen.getByText('Importer'))
 
-    await waitFor(() => {
-      expect(screen.getByText(/importation/i)).toBeInTheDocument()
-    })
+    expect(mockOnStartImport).toHaveBeenCalledWith('https://www.goodreads.com/user/show/12345')
   })
 
-  it('shows summary after successful import', async () => {
-    const user = userEvent.setup()
-    mockIsValid.mockReturnValue(true)
-    mockImport.mockResolvedValueOnce({
-      totalFound: 10,
-      imported: 8,
-      skipped: 2,
-      failed: 0,
-      errors: [],
-    })
-
+  it('shows help section when help button is clicked', () => {
     render(
-      <GoodReadsImportModal
-        isOpen={true}
-        onClose={mockOnClose}
-        onComplete={mockOnComplete}
-        userId="user-1"
-      />
+      <GoodReadsImportModal isOpen={true} onClose={mockOnClose} onStartImport={mockOnStartImport} />
     )
 
-    const input = screen.getByPlaceholderText(/goodreads\.com/i)
-    await user.type(input, 'https://www.goodreads.com/user/show/12345')
-    fireEvent.click(screen.getByText('Importer'))
+    expect(screen.queryByText(/Connectez-vous sur/)).not.toBeInTheDocument()
 
-    await waitFor(() => {
-      expect(screen.getByText(/8/)).toBeInTheDocument()
-      expect(screen.getByText(/2/)).toBeInTheDocument()
-    })
-  })
+    fireEvent.click(screen.getByText(/Comment trouver/))
 
-  it('shows error state when import fails', async () => {
-    const user = userEvent.setup()
-    mockIsValid.mockReturnValue(true)
-    mockImport.mockRejectedValueOnce(new Error('Could not access your GoodReads library'))
-
-    render(
-      <GoodReadsImportModal
-        isOpen={true}
-        onClose={mockOnClose}
-        onComplete={mockOnComplete}
-        userId="user-1"
-      />
-    )
-
-    const input = screen.getByPlaceholderText(/goodreads\.com/i)
-    await user.type(input, 'https://www.goodreads.com/user/show/12345')
-    fireEvent.click(screen.getByText('Importer'))
-
-    await waitFor(() => {
-      expect(screen.getByText(/erreur/i)).toBeInTheDocument()
-    })
-  })
-
-  it('calls onComplete after dismissing summary', async () => {
-    const user = userEvent.setup()
-    mockIsValid.mockReturnValue(true)
-    mockImport.mockResolvedValueOnce({
-      totalFound: 5,
-      imported: 5,
-      skipped: 0,
-      failed: 0,
-      errors: [],
-    })
-
-    render(
-      <GoodReadsImportModal
-        isOpen={true}
-        onClose={mockOnClose}
-        onComplete={mockOnComplete}
-        userId="user-1"
-      />
-    )
-
-    const input = screen.getByPlaceholderText(/goodreads\.com/i)
-    await user.type(input, 'https://www.goodreads.com/user/show/12345')
-    fireEvent.click(screen.getByText('Importer'))
-
-    await waitFor(() => {
-      expect(screen.getByText('Fermer')).toBeInTheDocument()
-    })
-
-    fireEvent.click(screen.getByText('Fermer'))
-    expect(mockOnComplete).toHaveBeenCalled()
+    expect(screen.getByText(/Connectez-vous sur/)).toBeInTheDocument()
+    expect(screen.getByText(/goodreads.com\/user\/show/)).toBeInTheDocument()
   })
 
   it('closes modal when clicking backdrop', () => {
     render(
-      <GoodReadsImportModal
-        isOpen={true}
-        onClose={mockOnClose}
-        onComplete={mockOnComplete}
-        userId="user-1"
-      />
+      <GoodReadsImportModal isOpen={true} onClose={mockOnClose} onStartImport={mockOnStartImport} />
     )
 
     const backdrop = document.querySelector('.fixed.inset-0')
     if (backdrop) fireEvent.click(backdrop)
+
+    expect(mockOnClose).toHaveBeenCalled()
+  })
+
+  it('closes modal when clicking close button', () => {
+    render(
+      <GoodReadsImportModal isOpen={true} onClose={mockOnClose} onStartImport={mockOnStartImport} />
+    )
+
+    fireEvent.click(screen.getByLabelText('Fermer le modal'))
 
     expect(mockOnClose).toHaveBeenCalled()
   })

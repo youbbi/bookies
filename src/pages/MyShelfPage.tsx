@@ -7,6 +7,7 @@ import { GoodReadsImportModal } from '@/components/GoodReadsImportModal'
 import { AppHeader } from '@/components/AppHeader'
 import { getUserBooks, removeBookFromShelf, addBookToShelf } from '@/lib/bookshelf'
 import { lookupByIsbn } from '@/lib/openLibrary'
+import { importGoodReadsLibrary, type ImportResult } from '@/lib/goodreadsImport'
 import type { UserBookWithBook, ReadingStatus } from '@/types'
 
 export function MyShelfPage() {
@@ -18,6 +19,10 @@ export function MyShelfPage() {
   const [isScannerOpen, setIsScannerOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [isImportOpen, setIsImportOpen] = useState(false)
+  const [importProgress, setImportProgress] = useState<{ current: number; total: number } | null>(
+    null
+  )
+  const [importResult, setImportResult] = useState<ImportResult | null>(null)
   const [scanMessage, setScanMessage] = useState<string | null>(null)
 
   useEffect(() => {
@@ -53,6 +58,10 @@ export function MyShelfPage() {
     )
   }, [])
 
+  const handleRatingChange = useCallback((userBookId: string, newRating: number | null) => {
+    setBooks((prev) => prev.map((b) => (b.id === userBookId ? { ...b, rating: newRating } : b)))
+  }, [])
+
   const handleAddBook = useCallback(
     async (book: Parameters<typeof addBookToShelf>[1]) => {
       if (!user) return
@@ -73,16 +82,36 @@ export function MyShelfPage() {
     [user]
   )
 
-  const handleImportComplete = useCallback(async () => {
-    setIsImportOpen(false)
-    if (!user) return
-    try {
-      const userBooks = await getUserBooks(user.id)
-      setBooks(userBooks)
-    } catch {
-      // Silently fail — user already sees imported books via modal summary
-    }
-  }, [user])
+  const handleStartImport = useCallback(
+    async (goodReadsUrl: string) => {
+      if (!user) return
+      setIsImportOpen(false)
+      setImportProgress({ current: 0, total: 0 })
+      setImportResult(null)
+
+      try {
+        const result = await importGoodReadsLibrary(user.id, goodReadsUrl, (current, total) => {
+          setImportProgress({ current, total })
+        })
+        setImportProgress(null)
+        setImportResult(result)
+
+        // Refresh books list
+        const userBooks = await getUserBooks(user.id)
+        setBooks(userBooks)
+
+        // Auto-dismiss result after 10 seconds
+        setTimeout(() => setImportResult(null), 10000)
+      } catch (err) {
+        setImportProgress(null)
+        setScanMessage(
+          `Erreur d'importation: ${err instanceof Error ? err.message : 'Erreur inconnue'}`
+        )
+        setTimeout(() => setScanMessage(null), 8000)
+      }
+    },
+    [user]
+  )
 
   const handleBarcodeScan = useCallback(
     async (barcode: string) => {
@@ -167,6 +196,7 @@ export function MyShelfPage() {
         onClose={() => setSelectedBook(null)}
         onRemove={handleRemoveBook}
         onStatusChange={handleStatusChange}
+        onRatingChange={handleRatingChange}
       />
 
       <BarcodeScannerModal
@@ -184,8 +214,7 @@ export function MyShelfPage() {
       <GoodReadsImportModal
         isOpen={isImportOpen}
         onClose={() => setIsImportOpen(false)}
-        onComplete={handleImportComplete}
-        userId={user.id}
+        onStartImport={handleStartImport}
       />
 
       {/* Floating action buttons */}
@@ -260,6 +289,64 @@ export function MyShelfPage() {
           </svg>
         </button>
       </div>
+
+      {/* Import progress toast */}
+      {importProgress && (
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-wood-600 text-white px-4 py-3 rounded-lg shadow-lg z-50 min-w-[280px]">
+          <div className="flex items-center gap-3">
+            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white flex-shrink-0" />
+            <div className="flex-1">
+              <p className="text-sm font-medium">Importation en cours...</p>
+              {importProgress.total > 0 && (
+                <>
+                  <p className="text-xs text-white/80">
+                    {importProgress.current} / {importProgress.total} livres
+                  </p>
+                  <div className="mt-1 h-1.5 bg-white/20 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-white/80 rounded-full transition-all duration-300"
+                      style={{
+                        width: `${(importProgress.current / importProgress.total) * 100}%`,
+                      }}
+                    />
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Import result toast */}
+      {importResult && (
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-green-600 text-white px-4 py-3 rounded-lg shadow-lg z-50 min-w-[280px]">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium">Importation terminée</p>
+              <p className="text-xs text-white/80">
+                {importResult.imported} importés
+                {importResult.skipped > 0 && `, ${importResult.skipped} ignorés`}
+                {importResult.failed > 0 && `, ${importResult.failed} échoués`}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setImportResult(null)}
+              className="text-white/80 hover:text-white ml-3"
+              aria-label="Fermer"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Scan message toast */}
       {scanMessage && (
