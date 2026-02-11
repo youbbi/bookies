@@ -1,0 +1,3 @@
+Task: Write tests for GoodReads profile URL parser + Implement GoodReads URL parser utility
+Summary: Created goodreads.ts with extractGoodReadsUserId() and isValidGoodReadsUrl(). 15 tests covering standard URLs, edge cases (no www, HTTP, trailing slash, query params), and invalid inputs.
+Files: src/lib/goodreads.ts (new), src/lib/goodreads.test.ts (new)
