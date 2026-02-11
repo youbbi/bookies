@@ -1,6 +1,6 @@
 import { supabase } from './supabase'
 import type { OpenLibraryBook } from './openLibrary'
-import type { Book, UserBookWithBook, LoanStatus } from '@/types'
+import type { Book, UserBookWithBook, LoanStatus, ReadingStatus } from '@/types'
 
 // Type for book insert operations
 type BookInsert = {
@@ -18,6 +18,7 @@ type UserBookInsert = {
   user_id: string
   book_id: string
   loan_status: LoanStatus
+  reading_status: ReadingStatus
 }
 
 /**
@@ -82,6 +83,7 @@ export async function addBookToShelf(
     user_id: userId,
     book_id: book.id,
     loan_status: 'available',
+    reading_status: 'reading',
   }
 
   const { data: userBook, error: userBookError } = await supabase
@@ -141,6 +143,23 @@ export async function updateLoanStatus(
   const { error } = await supabase
     .from('user_books')
     .update(updateData as never)
+    .eq('id', userBookId)
+
+  if (error) {
+    throw new Error(`Erreur lors de la mise à jour: ${error.message}`)
+  }
+}
+
+/**
+ * Update the reading status of a book
+ */
+export async function updateReadingStatus(
+  userBookId: string,
+  readingStatus: ReadingStatus
+): Promise<void> {
+  const { error } = await supabase
+    .from('user_books')
+    .update({ reading_status: readingStatus } as never)
     .eq('id', userBookId)
 
   if (error) {

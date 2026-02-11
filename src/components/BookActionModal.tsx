@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import type { UserBookWithBook, ReadingStatus } from '@/types'
+import { updateReadingStatus } from '@/lib/bookshelf'
 
 interface BookActionModalProps {
   book: UserBookWithBook | null
   onClose: () => void
   onRemove: (userBookId: string) => Promise<void>
+  onStatusChange?: (userBookId: string, newStatus: ReadingStatus) => void
 }
 
 const readingStatusLabels: Record<ReadingStatus, string> = {
@@ -13,8 +15,11 @@ const readingStatusLabels: Record<ReadingStatus, string> = {
   read: 'Lu',
 }
 
-export function BookActionModal({ book, onClose, onRemove }: BookActionModalProps) {
+const allStatuses: ReadingStatus[] = ['to_read', 'reading', 'read']
+
+export function BookActionModal({ book, onClose, onRemove, onStatusChange }: BookActionModalProps) {
   const [isRemoving, setIsRemoving] = useState(false)
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   if (!book) return null
@@ -28,6 +33,21 @@ export function BookActionModal({ book, onClose, onRemove }: BookActionModalProp
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Une erreur est survenue')
       setIsRemoving(false)
+    }
+  }
+
+  const handleStatusChange = async (newStatus: ReadingStatus) => {
+    if (newStatus === book.reading_status) return
+    try {
+      setIsUpdatingStatus(true)
+      setError(null)
+      await updateReadingStatus(book.id, newStatus)
+      onStatusChange?.(book.id, newStatus)
+      onClose()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Une erreur est survenue')
+    } finally {
+      setIsUpdatingStatus(false)
     }
   }
 
@@ -75,6 +95,28 @@ export function BookActionModal({ book, onClose, onRemove }: BookActionModalProp
             <span className="inline-block mt-2 px-2 py-1 text-xs font-medium rounded-full bg-cream-300 text-wood-500">
               {readingStatusLabels[book.reading_status]}
             </span>
+          </div>
+        </div>
+
+        {/* Reading status selector */}
+        <div className="px-4 pb-4">
+          <p className="text-sm text-muted mb-2">Changer le statut:</p>
+          <div className="flex gap-2">
+            {allStatuses.map((status) => (
+              <button
+                key={status}
+                type="button"
+                onClick={() => handleStatusChange(status)}
+                disabled={isUpdatingStatus || status === book.reading_status}
+                className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${
+                  status === book.reading_status
+                    ? 'bg-wood-500 text-white'
+                    : 'bg-cream-200 text-wood-500 hover:bg-cream-300'
+                }`}
+              >
+                {readingStatusLabels[status]}
+              </button>
+            ))}
           </div>
         </div>
 

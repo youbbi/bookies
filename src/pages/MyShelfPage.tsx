@@ -6,7 +6,7 @@ import { BookActionModal, BarcodeScannerModal, BookSearchModal } from '@/compone
 import { AppHeader } from '@/components/AppHeader'
 import { getUserBooks, removeBookFromShelf, addBookToShelf } from '@/lib/bookshelf'
 import { lookupByIsbn } from '@/lib/openLibrary'
-import type { UserBookWithBook } from '@/types'
+import type { UserBookWithBook, ReadingStatus } from '@/types'
 
 export function MyShelfPage() {
   const { user, loading: authLoading } = useAuthContext()
@@ -43,6 +43,12 @@ export function MyShelfPage() {
   const handleRemoveBook = useCallback(async (userBookId: string) => {
     await removeBookFromShelf(userBookId)
     setBooks((prev) => prev.filter((b) => b.id !== userBookId))
+  }, [])
+
+  const handleStatusChange = useCallback((userBookId: string, newStatus: ReadingStatus) => {
+    setBooks((prev) =>
+      prev.map((b) => (b.id === userBookId ? { ...b, reading_status: newStatus } : b))
+    )
   }, [])
 
   const handleAddBook = useCallback(
@@ -147,6 +153,7 @@ export function MyShelfPage() {
         book={selectedBook}
         onClose={() => setSelectedBook(null)}
         onRemove={handleRemoveBook}
+        onStatusChange={handleStatusChange}
       />
 
       <BarcodeScannerModal

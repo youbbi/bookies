@@ -40,3 +40,43 @@ export function extractGoodReadsUserId(url: string): string | null {
 export function isValidGoodReadsUrl(url: string): boolean {
   return extractGoodReadsUserId(url) !== null
 }
+
+/**
+ * Helper to get text content of an XML element by tag name.
+ */
+function getTagText(item: Element, tagName: string): string {
+  const el = item.getElementsByTagName(tagName)[0]
+  return el?.textContent?.trim() ?? ''
+}
+
+/**
+ * Parse GoodReads RSS XML into an array of GoodReadsBook objects.
+ * The shelf parameter indicates which shelf this RSS feed represents.
+ */
+export function parseGoodReadsRssXml(xml: string, shelf: GoodReadsShelf): GoodReadsBook[] {
+  try {
+    const parser = new DOMParser()
+    const doc = parser.parseFromString(xml, 'text/xml')
+
+    const parseError = doc.querySelector('parsererror')
+    if (parseError) return []
+
+    const items = doc.querySelectorAll('item')
+    const books: GoodReadsBook[] = []
+
+    items.forEach((item) => {
+      books.push({
+        title: getTagText(item, 'title'),
+        author: getTagText(item, 'author_name'),
+        isbn: getTagText(item, 'isbn'),
+        coverUrl: getTagText(item, 'book_large_image_url'),
+        rating: parseInt(getTagText(item, 'user_rating') || '0', 10),
+        shelf,
+      })
+    })
+
+    return books
+  } catch {
+    return []
+  }
+}

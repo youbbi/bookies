@@ -13,8 +13,8 @@ Track ID: `goodreads_import_20260210`
 
 ### 1.2 RSS XML Parser
 
-- [ ] Task: Write tests for GoodReads RSS XML parser (extract title, author, ISBN, cover, rating, shelf)
-- [ ] Task: Implement RSS XML parser that converts GoodReads RSS items to a GoodReadsBook type
+- [~] Task: Write tests for GoodReads RSS XML parser (extract title, author, ISBN, cover, rating, shelf)
+- [~] Task: Implement RSS XML parser that converts GoodReads RSS items to a GoodReadsBook type
 
 ### 1.3 RSS Fetch Service
 
