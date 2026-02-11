@@ -30,20 +30,20 @@ Track ID: `goodreads_import_20260210`
 
 ### 2.1 Duplicate Detection
 
-- [ ] Task: Write tests for duplicate detection logic (match by ISBN, open_library_id, title+author)
-- [ ] Task: Implement duplicate detection function that checks existing user books
+- [x] Task: Write tests for duplicate detection logic (match by ISBN, open_library_id, title+author) [ebc6a7d]
+- [x] Task: Implement duplicate detection function that checks existing user books [ebc6a7d]
 
 ### 2.2 Book Resolution
 
-- [ ] Task: Write tests for book resolution logic (Open Library lookup by ISBN, fallback to search, fallback to raw data)
-- [ ] Task: Implement book resolution function using existing Open Library API service
+- [x] Task: Write tests for book resolution logic (Open Library lookup by ISBN, fallback to search, fallback to raw data) [ebc6a7d]
+- [x] Task: Implement book resolution function using existing Open Library API service [ebc6a7d]
 
 ### 2.3 Import Orchestrator
 
-- [ ] Task: Write tests for import orchestrator (batch import with progress tracking, rate limiting, skip duplicates, summary report)
-- [ ] Task: Implement import orchestrator that coordinates fetch → resolve → deduplicate → add to shelf
+- [x] Task: Write tests for import orchestrator (batch import with progress tracking, rate limiting, skip duplicates, summary report) [ebc6a7d]
+- [x] Task: Implement import orchestrator that coordinates fetch → resolve → deduplicate → add to shelf [ebc6a7d]
 
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Import Engine' (Protocol in workflow.md)
+- [~] Task: Conductor - User Manual Verification 'Phase 2: Import Engine' (Protocol in workflow.md)
 
 ---
 
