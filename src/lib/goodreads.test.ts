@@ -1,5 +1,13 @@
-import { describe, it, expect } from 'vitest'
-import { extractGoodReadsUserId, isValidGoodReadsUrl, parseGoodReadsRssXml } from './goodreads'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import {
+  extractGoodReadsUserId,
+  isValidGoodReadsUrl,
+  parseGoodReadsRssXml,
+  fetchGoodReadsBooks,
+} from './goodreads'
+
+const mockFetch = vi.fn()
+vi.stubGlobal('fetch', mockFetch)
 
 describe('GoodReads URL Parser', () => {
   describe('extractGoodReadsUserId', () => {
@@ -177,5 +185,117 @@ describe('GoodReads RSS XML Parser', () => {
   it('assigns the correct shelf from the parameter', () => {
     const result = parseGoodReadsRssXml(makeRss(fullItem), 'to-read')
     expect(result[0].shelf).toBe('to-read')
+  })
+})
+
+describe('GoodReads RSS Fetch Service', () => {
+  const makeRssResponse = (items: string) => `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Test shelf</title>
+    ${items}
+  </channel>
+</rss>`
+
+  const bookItem = (title: string, isbn: string) => `<item>
+    <title>${title}</title>
+    <author_name>Author</author_name>
+    <isbn>${isbn}</isbn>
+    <book_large_image_url>https://example.com/cover.jpg</book_large_image_url>
+    <user_rating>4</user_rating>
+  </item>`
+
+  beforeEach(() => {
+    mockFetch.mockClear()
+  })
+
+  it('fetches books from all three shelves', async () => {
+    // Mock three shelf responses
+    mockFetch
+      .mockResolvedValueOnce({
+        ok: true,
+        text: () => Promise.resolve(makeRssResponse(bookItem('Read Book', '1111111111'))),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        text: () => Promise.resolve(makeRssResponse(bookItem('Reading Book', '2222222222'))),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        text: () => Promise.resolve(makeRssResponse(bookItem('Want Book', '3333333333'))),
+      })
+
+    const result = await fetchGoodReadsBooks('12345')
+
+    expect(mockFetch).toHaveBeenCalledTimes(3)
+    expect(result).toHaveLength(3)
+    expect(result[0].shelf).toBe('read')
+    expect(result[1].shelf).toBe('currently-reading')
+    expect(result[2].shelf).toBe('to-read')
+  })
+
+  it('constructs correct RSS feed URLs with proxy prefix', async () => {
+    mockFetch.mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(makeRssResponse('')),
+    })
+
+    await fetchGoodReadsBooks('12345')
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.stringContaining('/review/list_rss/12345?shelf=read')
+    )
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.stringContaining('/review/list_rss/12345?shelf=currently-reading')
+    )
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.stringContaining('/review/list_rss/12345?shelf=to-read')
+    )
+  })
+
+  it('returns empty array when all shelves fail', async () => {
+    mockFetch.mockResolvedValue({
+      ok: false,
+      status: 404,
+    })
+
+    const result = await fetchGoodReadsBooks('99999')
+    expect(result).toEqual([])
+  })
+
+  it('returns partial results when some shelves fail', async () => {
+    mockFetch
+      .mockResolvedValueOnce({
+        ok: true,
+        text: () => Promise.resolve(makeRssResponse(bookItem('Read Book', '1111111111'))),
+      })
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 403,
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        text: () => Promise.resolve(makeRssResponse(bookItem('Want Book', '3333333333'))),
+      })
+
+    const result = await fetchGoodReadsBooks('12345')
+    expect(result).toHaveLength(2)
+  })
+
+  it('handles network errors gracefully', async () => {
+    mockFetch.mockRejectedValue(new Error('Network error'))
+
+    const result = await fetchGoodReadsBooks('12345')
+    expect(result).toEqual([])
+  })
+
+  it('handles empty shelves', async () => {
+    mockFetch.mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(makeRssResponse('')),
+    })
+
+    const result = await fetchGoodReadsBooks('12345')
+    expect(result).toEqual([])
   })
 })

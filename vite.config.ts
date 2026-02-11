@@ -16,6 +16,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/covers/, ''),
       },
+      '/api/goodreads': {
+        target: 'https://www.goodreads.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/goodreads/, ''),
+      },
     },
   },
   plugins: [

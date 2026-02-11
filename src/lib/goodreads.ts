@@ -3,6 +3,9 @@
 
 import type { ReadingStatus } from '@/types'
 
+// Both dev (Vite proxy) and prod (Vercel function) use the same path
+const GOODREADS_BASE = '/api/goodreads'
+
 /** A book parsed from a GoodReads RSS feed */
 export interface GoodReadsBook {
   title: string
@@ -79,4 +82,32 @@ export function parseGoodReadsRssXml(xml: string, shelf: GoodReadsShelf): GoodRe
   } catch {
     return []
   }
+}
+
+const SHELVES: GoodReadsShelf[] = ['read', 'currently-reading', 'to-read']
+
+/**
+ * Fetch a single shelf's RSS feed for a user.
+ */
+async function fetchShelf(userId: string, shelf: GoodReadsShelf): Promise<GoodReadsBook[]> {
+  try {
+    const url = `${GOODREADS_BASE}/review/list_rss/${userId}?shelf=${shelf}`
+    const response = await fetch(url)
+
+    if (!response.ok) return []
+
+    const xml = await response.text()
+    return parseGoodReadsRssXml(xml, shelf)
+  } catch {
+    return []
+  }
+}
+
+/**
+ * Fetch all books from a GoodReads user's library (read, currently-reading, to-read).
+ * Returns a flat array of GoodReadsBook with shelf information.
+ */
+export async function fetchGoodReadsBooks(userId: string): Promise<GoodReadsBook[]> {
+  const results = await Promise.all(SHELVES.map((shelf) => fetchShelf(userId, shelf)))
+  return results.flat()
 }
