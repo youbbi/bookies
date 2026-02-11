@@ -27,7 +27,8 @@ type UserBookInsert = {
  */
 export async function addBookToShelf(
   userId: string,
-  openLibraryBook: OpenLibraryBook
+  openLibraryBook: OpenLibraryBook,
+  readingStatus: ReadingStatus = 'reading'
 ): Promise<UserBookWithBook> {
   // First, check if book already exists by open_library_id
   let book: Book | null = null
@@ -83,7 +84,7 @@ export async function addBookToShelf(
     user_id: userId,
     book_id: book.id,
     loan_status: 'available',
-    reading_status: 'reading',
+    reading_status: readingStatus,
   }
 
   const { data: userBook, error: userBookError } = await supabase
