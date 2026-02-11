@@ -1,0 +1,3 @@
+Tasks: Duplicate detection + Book resolution + Import orchestrator
+Summary: Created goodreadsImport.ts with isDuplicateBook(), resolveBook(), and importGoodReadsLibrary(). Updated addBookToShelf to accept optional readingStatus. 15 tests covering duplicates, resolution fallbacks, error handling, and progress callbacks.
+Files: src/lib/goodreadsImport.ts (new), src/lib/goodreadsImport.test.ts (new), src/lib/bookshelf.ts (modified)
