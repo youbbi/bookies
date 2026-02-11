@@ -35,7 +35,7 @@ export async function addBookToShelf(
     .from('books')
     .select('*')
     .eq('open_library_id', openLibraryBook.key)
-    .single()
+    .maybeSingle()
 
   if (existingBook) {
     book = existingBook as Book
@@ -70,7 +70,7 @@ export async function addBookToShelf(
     .select('*, book:books(*)')
     .eq('user_id', userId)
     .eq('book_id', book.id)
-    .single()
+    .maybeSingle()
 
   if (existingUserBook) {
     // Book already in shelf
