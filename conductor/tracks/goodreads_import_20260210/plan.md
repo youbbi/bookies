@@ -18,11 +18,11 @@ Track ID: `goodreads_import_20260210`
 
 ### 1.3 RSS Fetch Service
 
-- [ ] Task: Create CORS proxy for GoodReads RSS fetching (Vite dev proxy + Vercel API route or Supabase Edge Function)
-- [ ] Task: Write tests for GoodReads RSS fetch service (fetch all three shelves, handle pagination, handle errors)
-- [ ] Task: Implement GoodReads RSS fetch service with rate limiting and pagination support
+- [x] Task: Create CORS proxy for GoodReads RSS fetching (Vite dev proxy + Vercel API route or Supabase Edge Function) [1769c66]
+- [x] Task: Write tests for GoodReads RSS fetch service (fetch all three shelves, handle pagination, handle errors) [1769c66]
+- [x] Task: Implement GoodReads RSS fetch service with rate limiting and pagination support [1769c66]
 
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: GoodReads RSS Service' (Protocol in workflow.md)
+- [~] Task: Conductor - User Manual Verification 'Phase 1: GoodReads RSS Service' (Protocol in workflow.md)
 
 ---
 
