@@ -45,6 +45,7 @@ const createMockBook = (
   book_id: `book-${id}`,
   loan_status: 'available',
   reading_status: readingStatus,
+  rating: null,
   lent_to_user_id: null,
   borrowed_from_user_id: null,
   created_at: new Date().toISOString(),

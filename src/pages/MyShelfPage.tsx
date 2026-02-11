@@ -60,6 +60,7 @@ export function MyShelfPage() {
 
   const handleRatingChange = useCallback((userBookId: string, newRating: number | null) => {
     setBooks((prev) => prev.map((b) => (b.id === userBookId ? { ...b, rating: newRating } : b)))
+    setSelectedBook((prev) => (prev?.id === userBookId ? { ...prev, rating: newRating } : prev))
   }, [])
 
   const handleAddBook = useCallback(
@@ -95,6 +96,16 @@ export function MyShelfPage() {
         })
         setImportProgress(null)
         setImportResult(result)
+
+        console.log('[GoodReads Import] Result:', {
+          totalFound: result.totalFound,
+          imported: result.imported,
+          skipped: result.skipped,
+          failed: result.failed,
+        })
+        if (result.errors.length > 0) {
+          console.warn('[GoodReads Import] Errors:', result.errors)
+        }
 
         // Refresh books list
         const userBooks = await getUserBooks(user.id)

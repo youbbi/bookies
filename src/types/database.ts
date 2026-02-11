@@ -32,6 +32,7 @@ export interface UserBook {
   book_id: string
   loan_status: LoanStatus
   reading_status: ReadingStatus
+  rating: number | null
   lent_to_user_id: string | null
   borrowed_from_user_id: string | null
   created_at: string

@@ -19,6 +19,7 @@ type UserBookInsert = {
   book_id: string
   loan_status: LoanStatus
   reading_status: ReadingStatus
+  rating?: number | null
 }
 
 /**
@@ -28,7 +29,8 @@ type UserBookInsert = {
 export async function addBookToShelf(
   userId: string,
   openLibraryBook: OpenLibraryBook,
-  readingStatus: ReadingStatus = 'reading'
+  readingStatus: ReadingStatus = 'reading',
+  rating?: number | null
 ): Promise<UserBookWithBook> {
   // First, check if book already exists by open_library_id
   let book: Book | null = null
@@ -85,6 +87,7 @@ export async function addBookToShelf(
     book_id: book.id,
     loan_status: 'available',
     reading_status: readingStatus,
+    rating: rating ?? null,
   }
 
   const { data: userBook, error: userBookError } = await supabase
@@ -165,5 +168,19 @@ export async function updateReadingStatus(
 
   if (error) {
     throw new Error(`Erreur lors de la mise à jour: ${error.message}`)
+  }
+}
+
+/**
+ * Update the rating of a book
+ */
+export async function updateBookRating(userBookId: string, rating: number | null): Promise<void> {
+  const { error } = await supabase
+    .from('user_books')
+    .update({ rating } as never)
+    .eq('id', userBookId)
+
+  if (error) {
+    throw new Error(`Erreur lors de la mise à jour de la note: ${error.message}`)
   }
 }

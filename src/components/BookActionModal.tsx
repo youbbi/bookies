@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import type { UserBookWithBook, ReadingStatus } from '@/types'
-import { updateReadingStatus } from '@/lib/bookshelf'
+import { updateReadingStatus, updateBookRating } from '@/lib/bookshelf'
+import { StarRating } from './StarRating'
 
 interface BookActionModalProps {
   book: UserBookWithBook | null
   onClose: () => void
   onRemove: (userBookId: string) => Promise<void>
   onStatusChange?: (userBookId: string, newStatus: ReadingStatus) => void
+  onRatingChange?: (userBookId: string, newRating: number | null) => void
 }
 
 const readingStatusLabels: Record<ReadingStatus, string> = {
@@ -17,9 +19,16 @@ const readingStatusLabels: Record<ReadingStatus, string> = {
 
 const allStatuses: ReadingStatus[] = ['to_read', 'reading', 'read']
 
-export function BookActionModal({ book, onClose, onRemove, onStatusChange }: BookActionModalProps) {
+export function BookActionModal({
+  book,
+  onClose,
+  onRemove,
+  onStatusChange,
+  onRatingChange,
+}: BookActionModalProps) {
   const [isRemoving, setIsRemoving] = useState(false)
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false)
+  const [isUpdatingRating, setIsUpdatingRating] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   if (!book) return null
@@ -48,6 +57,19 @@ export function BookActionModal({ book, onClose, onRemove, onStatusChange }: Boo
       setError(err instanceof Error ? err.message : 'Une erreur est survenue')
     } finally {
       setIsUpdatingStatus(false)
+    }
+  }
+
+  const handleRatingChange = async (newRating: number | null) => {
+    try {
+      setIsUpdatingRating(true)
+      setError(null)
+      await updateBookRating(book.id, newRating)
+      onRatingChange?.(book.id, newRating)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Une erreur est survenue')
+    } finally {
+      setIsUpdatingRating(false)
     }
   }
 
@@ -95,6 +117,14 @@ export function BookActionModal({ book, onClose, onRemove, onStatusChange }: Boo
             <span className="inline-block mt-2 px-2 py-1 text-xs font-medium rounded-full bg-cream-300 text-wood-500">
               {readingStatusLabels[book.reading_status]}
             </span>
+          </div>
+        </div>
+
+        {/* Star rating */}
+        <div className="px-4 pb-4">
+          <p className="text-sm text-muted mb-2">Votre note:</p>
+          <div className={isUpdatingRating ? 'opacity-50 pointer-events-none' : ''}>
+            <StarRating value={book.rating} onChange={handleRatingChange} size="md" />
           </div>
         </div>
 

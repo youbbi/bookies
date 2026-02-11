@@ -113,9 +113,11 @@ export async function importGoodReadsLibrary(
       // Resolve to OpenLibraryBook
       const olBook = await resolveBook(grBook)
 
-      // Add to shelf with correct reading status
+      // Add to shelf with correct reading status and rating
       const readingStatus = SHELF_TO_STATUS[grBook.shelf]
-      const userBook = await addBookToShelf(userId, olBook, readingStatus)
+      // GoodReads rating is 0-5 where 0 = no rating; convert to null | 1-5
+      const rating = grBook.rating > 0 ? grBook.rating : null
+      const userBook = await addBookToShelf(userId, olBook, readingStatus, rating)
 
       // Add to existing books to prevent duplicate additions within same import
       existingBooks.push(userBook)
@@ -129,9 +131,10 @@ export async function importGoodReadsLibrary(
 
     onProgress?.(i + 1, grBooks.length)
 
-    // Rate limit: small delay between Open Library API calls
+    // Rate limit: Open Library allows ~1 request/sec
+    // Each book can make 1-2 OL requests + 1 Supabase write
     if (i < grBooks.length - 1) {
-      await new Promise((resolve) => setTimeout(resolve, 100))
+      await new Promise((resolve) => setTimeout(resolve, 1000))
     }
   }
 
