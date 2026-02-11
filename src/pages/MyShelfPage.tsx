@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useAuthContext } from '@/contexts/AuthContext'
 import { TreeBookshelf } from '@/components/TreeBookshelf'
 import { BookActionModal, BarcodeScannerModal, BookSearchModal } from '@/components'
+import { GoodReadsImportModal } from '@/components/GoodReadsImportModal'
 import { AppHeader } from '@/components/AppHeader'
 import { getUserBooks, removeBookFromShelf, addBookToShelf } from '@/lib/bookshelf'
 import { lookupByIsbn } from '@/lib/openLibrary'
@@ -16,6 +17,7 @@ export function MyShelfPage() {
   const [selectedBook, setSelectedBook] = useState<UserBookWithBook | null>(null)
   const [isScannerOpen, setIsScannerOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [isImportOpen, setIsImportOpen] = useState(false)
   const [scanMessage, setScanMessage] = useState<string | null>(null)
 
   useEffect(() => {
@@ -70,6 +72,17 @@ export function MyShelfPage() {
     },
     [user]
   )
+
+  const handleImportComplete = useCallback(async () => {
+    setIsImportOpen(false)
+    if (!user) return
+    try {
+      const userBooks = await getUserBooks(user.id)
+      setBooks(userBooks)
+    } catch {
+      // Silently fail — user already sees imported books via modal summary
+    }
+  }, [user])
 
   const handleBarcodeScan = useCallback(
     async (barcode: string) => {
@@ -168,8 +181,38 @@ export function MyShelfPage() {
         onSelectBook={handleAddBook}
       />
 
+      <GoodReadsImportModal
+        isOpen={isImportOpen}
+        onClose={() => setIsImportOpen(false)}
+        onComplete={handleImportComplete}
+        userId={user.id}
+      />
+
       {/* Floating action buttons */}
       <div className="fixed bottom-6 right-6 flex flex-col gap-3 z-40">
+        {/* Import button */}
+        <button
+          type="button"
+          onClick={() => setIsImportOpen(true)}
+          className="w-14 h-14 bg-green-600 hover:bg-green-700 text-white rounded-full shadow-lg flex items-center justify-center transition-colors"
+          aria-label="Importer depuis GoodReads"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+            className="w-6 h-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+            />
+          </svg>
+        </button>
+
         {/* Search button */}
         <button
           type="button"
