@@ -1,0 +1,36 @@
+## Phase Verification Report: Book Ratings
+
+### Automated Tests
+- Command: `npm test`
+- Result: 212 tests pass (4 pre-existing failures in AuthCallback.test.tsx unrelated to this feature)
+- New tests added: StarRating.test.tsx (17 tests)
+
+### Manual Verification Steps Completed
+1. ✅ Empty rating state displays correctly in BookActionModal
+2. ✅ Rating a book (clicking stars) saves to database
+3. ✅ Rating persists after page refresh
+4. ✅ Clearing a rating (clicking same star) works
+5. ⏭️ GoodReads import rating preservation - skipped (separate issue)
+
+### Database Migration
+- Migration 004_add_rating.sql applied via `supabase db push`
+- Adds `rating` column with CHECK constraint (1-5)
+- Adds index on (user_id, rating)
+
+### Files Changed
+- supabase/migrations/004_add_rating.sql (new)
+- src/types/database.ts
+- src/components/StarRating.tsx (new)
+- src/components/StarRating.test.tsx (new)
+- src/components/index.ts
+- src/lib/bookshelf.ts
+- src/components/BookActionModal.tsx
+- src/components/BookActionModal.test.tsx
+- src/pages/MyShelfPage.tsx
+- src/pages/MyShelfPage.test.tsx
+- src/lib/goodreadsImport.ts
+- src/lib/goodreadsImport.test.ts
+- src/components/TreeBookshelf/TreeBookshelf.test.tsx
+
+### User Confirmation
+User confirmed: "ok it works"
