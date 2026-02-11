@@ -1,0 +1,3 @@
+Tasks: Create CORS proxy + Write tests for RSS fetch service + Implement RSS fetch service
+Summary: Added Vite dev proxy (/api/goodreads), Vercel serverless function (api/goodreads.ts), and fetchGoodReadsBooks() that fetches all 3 shelves. 6 new tests for fetch service.
+Files: api/goodreads.ts (new), vite.config.ts (modified), src/lib/goodreads.ts (modified), src/lib/goodreads.test.ts (modified)
