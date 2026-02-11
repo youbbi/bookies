@@ -26,7 +26,7 @@ Track ID: `goodreads_import_20260210`
 
 ---
 
-## Phase 2: Import Engine
+## Phase 2: Import Engine [checkpoint: 8a5d086]
 
 ### 2.1 Duplicate Detection
 
@@ -43,7 +43,7 @@ Track ID: `goodreads_import_20260210`
 - [x] Task: Write tests for import orchestrator (batch import with progress tracking, rate limiting, skip duplicates, summary report) [ebc6a7d]
 - [x] Task: Implement import orchestrator that coordinates fetch → resolve → deduplicate → add to shelf [ebc6a7d]
 
-- [~] Task: Conductor - User Manual Verification 'Phase 2: Import Engine' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 2: Import Engine' (Protocol in workflow.md) [8a5d086]
 
 ---
 
