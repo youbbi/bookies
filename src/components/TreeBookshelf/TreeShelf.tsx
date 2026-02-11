@@ -11,6 +11,9 @@ interface TreeShelfProps {
 }
 
 export function TreeShelf({ position, label, books, onBookClick }: TreeShelfProps) {
+  // Only show loan status on "Mes coups de cœur" shelf (read books)
+  const showLoanStatus = position === 'lower-center'
+
   return (
     <div
       className={`tree-shelf tree-shelf--${position}`}
@@ -26,7 +29,7 @@ export function TreeShelf({ position, label, books, onBookClick }: TreeShelfProp
               title={userBook.book.title}
               author={userBook.book.author}
               coverUrl={userBook.book.cover_url}
-              loanStatus={userBook.loan_status}
+              loanStatus={showLoanStatus ? userBook.loan_status : undefined}
               onClick={() => onBookClick?.(userBook)}
               size="shelf"
             />

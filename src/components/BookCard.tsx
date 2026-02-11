@@ -56,16 +56,17 @@ export function BookCard({
   title,
   author,
   coverUrl,
-  loanStatus = 'available',
+  loanStatus,
   lentToName,
   borrowedFromName,
   onClick,
   size = 'default',
 }: BookCardProps) {
-  const status = statusConfig[loanStatus]
+  const status = loanStatus ? statusConfig[loanStatus] : null
   const sizes = sizeConfig[size]
 
   const getStatusText = () => {
+    if (!loanStatus || !status) return null
     if (loanStatus === 'lent' && lentToName) {
       return `Prêté à ${lentToName}`
     }
@@ -100,12 +101,14 @@ export function BookCard({
           </div>
         )}
 
-        {/* Status badge */}
-        <div
-          className={`absolute bottom-2 left-2 right-2 px-2 py-1 rounded text-xs font-medium text-center truncate ${status.className}`}
-        >
-          {getStatusText()}
-        </div>
+        {/* Status badge - only show if loanStatus is provided */}
+        {status && (
+          <div
+            className={`absolute bottom-2 left-2 right-2 px-2 py-1 rounded text-xs font-medium text-center truncate ${status.className}`}
+          >
+            {getStatusText()}
+          </div>
+        )}
       </div>
 
       {/* Info - hidden for shelf size */}
