@@ -71,167 +71,157 @@
     @apply hover:bg-cream-300 transition-colors;
   }
 
-  /* Tree Bookshelf Component */
-  .tree-bookshelf {
-    @apply w-full overflow-hidden;
-    height: 100vh;
+  /* Featured Tree Section (Compact Hero) */
+  .featured-tree {
+    @apply relative w-full overflow-hidden;
+    height: 280px;
+    background: linear-gradient(135deg, var(--color-warm-green) 0%, var(--color-wood-400) 100%);
   }
 
-  .tree-bookshelf__overlay {
-    @apply absolute top-0 left-0 right-0 text-center pt-6 pointer-events-none z-20;
+  @media (min-width: 768px) {
+    .featured-tree {
+      height: 320px;
+    }
   }
 
-  .tree-bookshelf__title {
-    @apply text-4xl font-serif text-cream-50 drop-shadow-lg;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  .featured-tree__background {
+    @apply absolute inset-0 w-full h-full object-cover opacity-30;
+    object-position: center 30%;
   }
 
-  .tree-bookshelf__subtitle {
-    @apply text-sm text-cream-100 drop-shadow-md mt-1;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  .featured-tree__content {
+    @apply relative z-10 h-full flex flex-col items-center justify-center px-4 py-6;
   }
 
-  .tree-bookshelf__container {
-    @apply relative w-full h-full flex items-center justify-center;
+  .featured-tree__title {
+    @apply text-lg font-serif font-medium text-cream-50 mb-3 drop-shadow-md;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
   }
 
-  .tree-bookshelf__tree {
-    @apply w-full h-full object-cover select-none;
-    min-width: 100vw;
-    min-height: 100%;
-    object-position: center 20%;
-    transform: scale(1.6);
+  .featured-tree__books {
+    @apply flex gap-3 justify-center items-end;
   }
 
-  /* Tree Shelf Component */
-  .tree-shelf {
-    @apply absolute z-10;
+  .featured-tree__empty {
+    @apply text-cream-200 text-sm italic;
   }
 
-  .tree-shelf__surface {
-    @apply flex flex-col items-center;
+  /* Book Section Component (Collapsible) */
+  .book-section {
+    @apply border-b border-cream-300;
   }
 
-  .tree-shelf__label {
-    @apply text-sm font-serif font-medium text-wood-600 mb-2 px-3 py-1 rounded-full;
-    background: linear-gradient(to bottom, var(--color-cream-200), var(--color-cream-300));
-    box-shadow: 0 2px 4px rgba(61, 41, 20, 0.1);
+  .book-section__header {
+    @apply flex items-center justify-between px-4 py-3 cursor-pointer;
+    @apply bg-cream-200 hover:bg-cream-300 transition-colors;
   }
 
-  .tree-shelf__books {
-    @apply flex gap-2 px-4 py-2 overflow-x-auto max-w-xs;
-    align-items: flex-end; /* Books sit ON the shelf */
+  .book-section__header-left {
+    @apply flex items-center gap-2;
+  }
+
+  .book-section__chevron {
+    @apply w-5 h-5 text-wood-500 transition-transform duration-200;
+  }
+
+  .book-section__chevron--expanded {
+    @apply rotate-90;
+  }
+
+  .book-section__title {
+    @apply text-sm font-serif font-medium text-wood-600;
+  }
+
+  .book-section__count {
+    @apply text-xs px-2 py-0.5 rounded-full bg-wood-200 text-wood-600;
+  }
+
+  .book-section__content {
+    @apply overflow-hidden transition-all duration-300 ease-in-out;
+  }
+
+  .book-section__content--collapsed {
+    max-height: 0;
+  }
+
+  .book-section__content--expanded {
+    max-height: 500px;
+  }
+
+  .book-section__books {
+    @apply flex gap-3 px-4 py-3 overflow-x-auto bg-cream-100;
     scrollbar-width: thin;
     scrollbar-color: var(--color-wood-300) transparent;
   }
 
-  .tree-shelf__books::-webkit-scrollbar {
-    height: 4px;
+  .book-section__books::-webkit-scrollbar {
+    height: 6px;
   }
 
-  .tree-shelf__books::-webkit-scrollbar-track {
-    background: transparent;
+  .book-section__books::-webkit-scrollbar-track {
+    @apply bg-cream-200 rounded-full;
   }
 
-  .tree-shelf__books::-webkit-scrollbar-thumb {
+  .book-section__books::-webkit-scrollbar-thumb {
     @apply bg-wood-300 rounded-full;
   }
 
-  .tree-shelf__empty {
-    @apply text-xs text-muted italic px-4 py-8;
+  .book-section__empty {
+    @apply text-sm text-muted italic px-4 py-6 text-center bg-cream-100;
   }
 
-  .tree-shelf__edge {
-    display: none;
+  /* Library Search Component */
+  .library-search {
+    @apply sticky bottom-0 left-0 right-0 z-30;
+    @apply bg-cream-100 border-t border-cream-300 shadow-lg;
   }
 
-  /* Shelf Positions - Centered shelves for the tree */
-  .tree-shelf--upper-center {
-    top: 47%;
-    left: 50%;
-    transform: translate(-50%, -100%);
+  .library-search__input-wrapper {
+    @apply flex items-center gap-2 px-4 py-3;
   }
 
-  .tree-shelf--lower-center {
-    top: 83%;
-    left: 50%;
-    transform: translate(-50%, -100%);
+  .library-search__icon {
+    @apply w-5 h-5 text-wood-400;
   }
 
-  /* Tree Decorations */
-  .tree-decorations {
-    @apply absolute inset-0 pointer-events-none z-5;
+  .library-search__input {
+    @apply flex-1 bg-transparent border-none outline-none;
+    @apply text-foreground placeholder:text-muted;
   }
 
-  .tree-decoration {
-    @apply absolute;
+  .library-search__clear {
+    @apply w-6 h-6 flex items-center justify-center rounded-full;
+    @apply text-wood-400 hover:text-wood-600 hover:bg-cream-200 transition-colors;
   }
 
-  .tree-decoration--plant-top {
-    width: 40px;
-    height: 50px;
-    top: 12%;
-    right: 25%;
+  .library-search__results {
+    @apply absolute bottom-full left-0 right-0 max-h-80 overflow-y-auto;
+    @apply bg-cream-50 border border-cream-300 rounded-t-lg shadow-xl;
   }
 
-  .tree-decoration--vine-left {
-    width: 60px;
-    height: 120px;
-    top: 30%;
-    left: 8%;
+  .library-search__result-item {
+    @apply flex items-center gap-3 px-4 py-2 hover:bg-cream-100 cursor-pointer;
+    @apply border-b border-cream-200 last:border-b-0;
   }
 
-  .tree-decoration--leaves-right {
-    width: 50px;
-    height: 40px;
-    top: 55%;
-    right: 5%;
+  .library-search__result-cover {
+    @apply w-10 h-14 rounded bg-cream-300 object-cover flex-shrink-0;
   }
 
-  .tree-decoration--succulent {
-    width: 30px;
-    height: 35px;
-    bottom: 20%;
-    left: 20%;
+  .library-search__result-info {
+    @apply flex-1 min-w-0;
   }
 
-  /* Responsive - Mobile */
-  @media (max-width: 767px) {
-    .tree-bookshelf {
-      height: auto;
-      min-height: 100vh;
-      overflow-y: auto;
-    }
+  .library-search__result-title {
+    @apply text-sm font-medium text-foreground truncate;
+  }
 
-    .tree-bookshelf__container {
-      @apply flex-col;
-      min-height: 100vh;
-    }
+  .library-search__result-author {
+    @apply text-xs text-muted truncate;
+  }
 
-    .tree-bookshelf__tree {
-      @apply w-full;
-      height: auto;
-      min-height: 80vh;
-    }
-
-    .tree-shelf {
-      @apply relative;
-      position: relative !important;
-      top: auto !important;
-      left: auto !important;
-      right: auto !important;
-      bottom: auto !important;
-      transform: none !important;
-      @apply mb-6 w-full;
-    }
-
-    .tree-shelf__books {
-      @apply max-w-full justify-center flex-wrap;
-    }
-
-    .tree-decorations {
-      @apply hidden;
-    }
+  .library-search__no-results {
+    @apply text-sm text-muted text-center py-6;
   }
 
   /* Animations */
@@ -246,23 +236,29 @@
     }
   }
 
-  .tree-shelf__books > * {
+  .featured-tree__books > *,
+  .book-section__books > * {
     animation: book-slide-in 0.3s ease-out backwards;
   }
 
-  .tree-shelf__books > *:nth-child(1) {
+  .featured-tree__books > *:nth-child(1),
+  .book-section__books > *:nth-child(1) {
     animation-delay: 0.05s;
   }
-  .tree-shelf__books > *:nth-child(2) {
+  .featured-tree__books > *:nth-child(2),
+  .book-section__books > *:nth-child(2) {
     animation-delay: 0.1s;
   }
-  .tree-shelf__books > *:nth-child(3) {
+  .featured-tree__books > *:nth-child(3),
+  .book-section__books > *:nth-child(3) {
     animation-delay: 0.15s;
   }
-  .tree-shelf__books > *:nth-child(4) {
+  .featured-tree__books > *:nth-child(4),
+  .book-section__books > *:nth-child(4) {
     animation-delay: 0.2s;
   }
-  .tree-shelf__books > *:nth-child(5) {
+  .featured-tree__books > *:nth-child(5),
+  .book-section__books > *:nth-child(5) {
     animation-delay: 0.25s;
   }
 }

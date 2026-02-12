@@ -1,7 +1,9 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuthContext } from '@/contexts/AuthContext'
-import { TreeBookshelf } from '@/components/TreeBookshelf'
+import { FeaturedTree } from '@/components/FeaturedTree'
+import { BookSection } from '@/components/BookSection'
+import { SearchBar } from '@/components/LibrarySearch'
 import { BookActionModal, BarcodeScannerModal, BookSearchModal } from '@/components'
 import { GoodReadsImportModal } from '@/components/GoodReadsImportModal'
 import { AppHeader } from '@/components/AppHeader'
@@ -154,6 +156,17 @@ export function MyShelfPage() {
     [user]
   )
 
+  // Categorize books by reading status (must be before early returns)
+  const readingBooks = useMemo(() => books.filter((b) => b.reading_status === 'reading'), [books])
+  const toReadBooks = useMemo(() => books.filter((b) => b.reading_status === 'to_read'), [books])
+  const readBooks = useMemo(() => books.filter((b) => b.reading_status === 'read'), [books])
+
+  // Top-rated books (4-5 stars) for "Mes coups de cœur"
+  const favoriteBooks = useMemo(
+    () => readBooks.filter((b) => b.rating !== null && b.rating >= 4),
+    [readBooks]
+  )
+
   // Show loading while checking auth
   if (authLoading || (loading && user)) {
     return (
@@ -193,15 +206,48 @@ export function MyShelfPage() {
   // Show bookshelf with user's books
   const displayName = user.user_metadata?.full_name || user.email?.split('@')[0] || 'Utilisateur'
 
+  const handleBookClick = (book: UserBookWithBook) => setSelectedBook(book)
+
   return (
-    <div className="h-screen overflow-hidden relative">
+    <div className="min-h-screen bg-background flex flex-col pb-16">
       <AppHeader displayName={displayName} />
-      <TreeBookshelf books={books} onBookClick={(book) => setSelectedBook(book)} />
-      <div className="tree-bookshelf__overlay">
-        <h1 className="tree-bookshelf__title">Bookies</h1>
-        <p className="tree-bookshelf__subtitle">Partagez vos livres avec vos proches</p>
+
+      {/* Featured Tree Section - Currently Reading */}
+      <FeaturedTree books={readingBooks} onBookClick={handleBookClick} />
+
+      {/* Collapsible Book Sections */}
+      <div className="flex-1 overflow-y-auto">
+        {/* Mes coups de cœur - only show if there are favorites */}
+        {favoriteBooks.length > 0 && (
+          <BookSection
+            title="Mes coups de cœur"
+            books={favoriteBooks}
+            defaultExpanded
+            onBookClick={handleBookClick}
+            showLoanStatus
+          />
+        )}
+
+        <BookSection
+          title="À lire"
+          books={toReadBooks}
+          defaultExpanded
+          onBookClick={handleBookClick}
+        />
+
+        <BookSection
+          title="Lus"
+          books={readBooks}
+          defaultExpanded={false}
+          onBookClick={handleBookClick}
+          showLoanStatus
+        />
       </div>
 
+      {/* Library Search Bar */}
+      <SearchBar books={books} onBookClick={handleBookClick} />
+
+      {/* Modals */}
       <BookActionModal
         book={selectedBook}
         onClose={() => setSelectedBook(null)}
@@ -229,7 +275,7 @@ export function MyShelfPage() {
       />
 
       {/* Floating action buttons */}
-      <div className="fixed bottom-6 right-6 flex flex-col gap-3 z-40">
+      <div className="fixed bottom-20 right-6 flex flex-col gap-3 z-40">
         {/* Import button */}
         <button
           type="button"
@@ -253,12 +299,12 @@ export function MyShelfPage() {
           </svg>
         </button>
 
-        {/* Search button */}
+        {/* Add book button */}
         <button
           type="button"
           onClick={() => setIsSearchOpen(true)}
           className="w-14 h-14 bg-accent hover:bg-accent/90 text-white rounded-full shadow-lg flex items-center justify-center transition-colors"
-          aria-label="Rechercher un livre"
+          aria-label="Ajouter un livre"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

@@ -51,12 +51,12 @@ Track ID: `goodreads_import_20260210`
 
 ### 3.1 GoodReads Import Modal
 
-- [ ] Task: Write tests for GoodReadsImportModal component (URL input, validation, progress display, summary display, error states)
-- [ ] Task: Build GoodReadsImportModal with URL input view, progress view, and summary view
+- [x] Task: Write tests for GoodReadsImportModal component (URL input, validation, progress display, summary display, error states) [b8a0bca]
+- [x] Task: Build GoodReadsImportModal with URL input view, progress view, and summary view [b8a0bca]
 
 ### 3.2 My Shelf Integration
 
-- [ ] Task: Write tests for import button integration on MyShelfPage
-- [ ] Task: Add import floating action button to MyShelfPage and connect GoodReadsImportModal
+- [x] Task: Write tests for import button integration on MyShelfPage [b8a0bca]
+- [x] Task: Add import floating action button to MyShelfPage and connect GoodReadsImportModal [b8a0bca]
 
 - [ ] Task: Conductor - User Manual Verification 'Phase 3: Import UI' (Protocol in workflow.md)
