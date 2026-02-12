@@ -62,7 +62,10 @@ export function parseGoodReadsRssXml(xml: string, shelf: GoodReadsShelf): GoodRe
     const doc = parser.parseFromString(xml, 'text/xml')
 
     const parseError = doc.querySelector('parsererror')
-    if (parseError) return []
+    if (parseError) {
+      console.error('[GoodReads] XML parse error:', parseError.textContent?.slice(0, 300))
+      return []
+    }
 
     const items = doc.querySelectorAll('item')
     const books: GoodReadsBook[] = []
@@ -79,7 +82,8 @@ export function parseGoodReadsRssXml(xml: string, shelf: GoodReadsShelf): GoodRe
     })
 
     return books
-  } catch {
+  } catch (error) {
+    console.error('[GoodReads] parseGoodReadsRssXml exception:', error)
     return []
   }
 }
@@ -90,15 +94,31 @@ const SHELVES: GoodReadsShelf[] = ['read', 'currently-reading', 'to-read']
  * Fetch a single shelf's RSS feed for a user.
  */
 async function fetchShelf(userId: string, shelf: GoodReadsShelf): Promise<GoodReadsBook[]> {
+  const url = `${GOODREADS_BASE}/review/list_rss/${userId}?shelf=${shelf}`
   try {
-    const url = `${GOODREADS_BASE}/review/list_rss/${userId}?shelf=${shelf}`
     const response = await fetch(url)
 
-    if (!response.ok) return []
+    if (!response.ok) {
+      const body = await response.text().catch(() => '(unreadable)')
+      console.error(`[GoodReads] fetchShelf ${shelf}: HTTP ${response.status}`, body.slice(0, 200))
+      return []
+    }
 
-    const xml = await response.text()
-    return parseGoodReadsRssXml(xml, shelf)
-  } catch {
+    const text = await response.text()
+    const contentType = response.headers.get('content-type') ?? ''
+
+    // Detect SPA fallback — HTML returned instead of XML
+    if (contentType.includes('text/html') || text.trimStart().startsWith('<!')) {
+      console.error(
+        `[GoodReads] fetchShelf ${shelf}: got HTML instead of XML (function not reached?)`,
+        text.slice(0, 200)
+      )
+      return []
+    }
+
+    return parseGoodReadsRssXml(text, shelf)
+  } catch (error) {
+    console.error(`[GoodReads] fetchShelf ${shelf}: exception`, error)
     return []
   }
 }
