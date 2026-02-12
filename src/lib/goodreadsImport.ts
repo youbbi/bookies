@@ -113,6 +113,11 @@ export async function importGoodReadsLibrary(
       // Resolve to OpenLibraryBook
       const olBook = await resolveBook(grBook)
 
+      // Prefer GoodReads cover URL — OL often returns a 1x1 pixel for missing covers
+      if (grBook.coverUrl) {
+        olBook.coverUrl = grBook.coverUrl
+      }
+
       // Add to shelf with correct reading status and rating
       const readingStatus = SHELF_TO_STATUS[grBook.shelf]
       // GoodReads rating is 0-5 where 0 = no rating; convert to null | 1-5

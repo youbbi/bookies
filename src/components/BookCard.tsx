@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { LoanStatus } from '@/types'
 
 type BookCardSize = 'default' | 'small' | 'shelf'
@@ -62,6 +63,7 @@ export function BookCard({
   onClick,
   size = 'default',
 }: BookCardProps) {
+  const [imgFailed, setImgFailed] = useState(false)
   const status = loanStatus ? statusConfig[loanStatus] : null
   const sizes = sizeConfig[size]
 
@@ -86,14 +88,17 @@ export function BookCard({
       <div
         className={`relative ${sizes.cover} rounded-lg overflow-hidden shadow-card group-hover:shadow-card-hover transition-shadow bg-cream-300`}
       >
-        {coverUrl ? (
+        {coverUrl && !imgFailed ? (
           <img
             src={coverUrl}
             alt={`Couverture de ${title}`}
             className="w-full h-full object-cover"
-            onError={(e) => {
-              e.currentTarget.style.display = 'none'
+            onLoad={(e) => {
+              if (e.currentTarget.naturalWidth <= 1 || e.currentTarget.naturalHeight <= 1) {
+                setImgFailed(true)
+              }
             }}
+            onError={() => setImgFailed(true)}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center p-2">
