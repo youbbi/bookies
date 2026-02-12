@@ -19,7 +19,12 @@ export default defineConfig({
       '/api/goodreads': {
         target: 'https://www.goodreads.com',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/goodreads/, ''),
+        rewrite: (path) => {
+          const url = new URL(path, 'http://localhost')
+          const userId = url.searchParams.get('userId')
+          const shelf = url.searchParams.get('shelf')
+          return `/review/list_rss/${userId}?shelf=${shelf}`
+        },
       },
     },
   },

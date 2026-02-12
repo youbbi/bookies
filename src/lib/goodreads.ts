@@ -3,8 +3,7 @@
 
 import type { ReadingStatus } from '@/types'
 
-// Both dev (Vite proxy) and prod (Vercel function) use the same path
-const GOODREADS_BASE = '/api/goodreads'
+const GOODREADS_API = '/api/goodreads'
 
 /** A book parsed from a GoodReads RSS feed */
 export interface GoodReadsBook {
@@ -94,7 +93,7 @@ const SHELVES: GoodReadsShelf[] = ['read', 'currently-reading', 'to-read']
  * Fetch a single shelf's RSS feed for a user.
  */
 async function fetchShelf(userId: string, shelf: GoodReadsShelf): Promise<GoodReadsBook[]> {
-  const url = `${GOODREADS_BASE}/review/list_rss/${userId}?shelf=${shelf}`
+  const url = `${GOODREADS_API}?userId=${userId}&shelf=${shelf}`
   try {
     const response = await fetch(url)
 
