@@ -23,7 +23,8 @@ export default defineConfig({
           const url = new URL(path, 'http://localhost')
           const userId = url.searchParams.get('userId')
           const shelf = url.searchParams.get('shelf')
-          return `/review/list_rss/${userId}?shelf=${shelf}`
+          const page = url.searchParams.get('page') || '1'
+          return `/review/list_rss/${userId}?shelf=${shelf}&page=${page}`
         },
       },
     },

@@ -89,17 +89,26 @@ export function parseGoodReadsRssXml(xml: string, shelf: GoodReadsShelf): GoodRe
 
 const SHELVES: GoodReadsShelf[] = ['read', 'currently-reading', 'to-read']
 
+const MAX_PAGES = 10 // Safety limit to avoid infinite loops
+
 /**
- * Fetch a single shelf's RSS feed for a user.
+ * Fetch a single page of a shelf's RSS feed.
  */
-async function fetchShelf(userId: string, shelf: GoodReadsShelf): Promise<GoodReadsBook[]> {
-  const url = `${GOODREADS_API}?userId=${userId}&shelf=${shelf}`
+async function fetchShelfPage(
+  userId: string,
+  shelf: GoodReadsShelf,
+  page: number
+): Promise<GoodReadsBook[]> {
+  const url = `${GOODREADS_API}?userId=${userId}&shelf=${shelf}&page=${page}`
   try {
     const response = await fetch(url)
 
     if (!response.ok) {
       const body = await response.text().catch(() => '(unreadable)')
-      console.error(`[GoodReads] fetchShelf ${shelf}: HTTP ${response.status}`, body.slice(0, 200))
+      console.error(
+        `[GoodReads] fetchShelf ${shelf} p${page}: HTTP ${response.status}`,
+        body.slice(0, 200)
+      )
       return []
     }
 
@@ -109,7 +118,7 @@ async function fetchShelf(userId: string, shelf: GoodReadsShelf): Promise<GoodRe
     // Detect SPA fallback — HTML returned instead of XML
     if (contentType.includes('text/html') || text.trimStart().startsWith('<!')) {
       console.error(
-        `[GoodReads] fetchShelf ${shelf}: got HTML instead of XML (function not reached?)`,
+        `[GoodReads] fetchShelf ${shelf} p${page}: got HTML instead of XML (function not reached?)`,
         text.slice(0, 200)
       )
       return []
@@ -117,9 +126,24 @@ async function fetchShelf(userId: string, shelf: GoodReadsShelf): Promise<GoodRe
 
     return parseGoodReadsRssXml(text, shelf)
   } catch (error) {
-    console.error(`[GoodReads] fetchShelf ${shelf}: exception`, error)
+    console.error(`[GoodReads] fetchShelf ${shelf} p${page}: exception`, error)
     return []
   }
+}
+
+/**
+ * Fetch all pages of a single shelf's RSS feed (GoodReads returns ~50 items/page).
+ */
+async function fetchShelf(userId: string, shelf: GoodReadsShelf): Promise<GoodReadsBook[]> {
+  const allBooks: GoodReadsBook[] = []
+
+  for (let page = 1; page <= MAX_PAGES; page++) {
+    const books = await fetchShelfPage(userId, shelf, page)
+    if (books.length === 0) break
+    allBooks.push(...books)
+  }
+
+  return allBooks
 }
 
 /**

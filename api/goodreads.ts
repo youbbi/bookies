@@ -20,8 +20,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: 'Invalid shelf' })
   }
 
+  const page = (req.query.page as string) || '1'
+
   try {
-    const url = `https://www.goodreads.com/review/list_rss/${userId}?shelf=${shelf}`
+    const url = `https://www.goodreads.com/review/list_rss/${userId}?shelf=${shelf}&page=${page}`
 
     const response = await fetch(url, {
       headers: {
