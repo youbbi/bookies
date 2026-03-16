@@ -7,10 +7,18 @@ import { SearchBar } from '@/components/LibrarySearch'
 import { BookActionModal, BarcodeScannerModal, BookSearchModal } from '@/components'
 import { GoodReadsImportModal } from '@/components/GoodReadsImportModal'
 import { AppHeader } from '@/components/AppHeader'
-import { getUserBooks, removeBookFromShelf, addBookToShelf } from '@/lib/bookshelf'
+import { UsernamePrompt } from '@/components/UsernamePrompt'
+import { LoanRequestsPanel } from '@/components/LoanRequestsPanel'
+import {
+  getUserBooks,
+  removeBookFromShelf,
+  addBookToShelf,
+  getMyLoanRequests,
+} from '@/lib/bookshelf'
+import { supabase } from '@/lib/supabase'
 import { lookupByIsbn } from '@/lib/openLibrary'
 import { importGoodReadsLibrary, type ImportResult } from '@/lib/goodreadsImport'
-import type { UserBookWithBook, ReadingStatus } from '@/types'
+import type { UserBookWithBook, LoanRequestWithBook, ReadingStatus } from '@/types'
 
 export function MyShelfPage() {
   const { user, loading: authLoading } = useAuthContext()
@@ -26,6 +34,36 @@ export function MyShelfPage() {
   )
   const [importResult, setImportResult] = useState<ImportResult | null>(null)
   const [scanMessage, setScanMessage] = useState<string | null>(null)
+  const [username, setUsername] = useState<string | null | undefined>(undefined) // undefined = loading
+  const [loanRequests, setLoanRequests] = useState<LoanRequestWithBook[]>([])
+
+  // Fetch username from profile
+  useEffect(() => {
+    if (!user) {
+      setUsername(null)
+      return
+    }
+
+    supabase
+      .from('profiles')
+      .select('username')
+      .eq('id', user.id)
+      .single()
+      .then(({ data }) => {
+        setUsername(data?.username ?? null)
+      })
+  }, [user])
+
+  // Fetch loan requests
+  const fetchLoanRequests = useCallback(async () => {
+    if (!user) return
+    try {
+      const requests = await getMyLoanRequests(user.id)
+      setLoanRequests(requests)
+    } catch {
+      // Silent fail — not critical
+    }
+  }, [user])
 
   useEffect(() => {
     if (!user) {
@@ -47,7 +85,8 @@ export function MyShelfPage() {
     }
 
     fetchBooks()
-  }, [user])
+    fetchLoanRequests()
+  }, [user, fetchLoanRequests])
 
   const handleRemoveBook = useCallback(async (userBookId: string) => {
     await removeBookFromShelf(userBookId)
@@ -203,6 +242,20 @@ export function MyShelfPage() {
     )
   }
 
+  // Show username prompt if not set
+  if (username === undefined) {
+    // Still loading profile
+    return (
+      <div className="h-screen flex items-center justify-center bg-background">
+        <p className="text-lg text-wood-500">Chargement...</p>
+      </div>
+    )
+  }
+
+  if (username === null) {
+    return <UsernamePrompt userId={user.id} onComplete={(u) => setUsername(u)} />
+  }
+
   // Show bookshelf with user's books
   const displayName = user.user_metadata?.full_name || user.email?.split('@')[0] || 'Utilisateur'
 
@@ -210,7 +263,10 @@ export function MyShelfPage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col pb-16">
-      <AppHeader displayName={displayName} />
+      <AppHeader displayName={displayName} username={username} />
+
+      {/* Loan requests panel */}
+      <LoanRequestsPanel requests={loanRequests} onRequestHandled={fetchLoanRequests} />
 
       {/* Featured Tree Section - Currently Reading */}
       <FeaturedTree books={readingBooks} onBookClick={handleBookClick} />
