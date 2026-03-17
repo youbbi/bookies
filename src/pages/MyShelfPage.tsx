@@ -49,7 +49,7 @@ export function MyShelfPage() {
       .select('username')
       .eq('id', user.id)
       .single()
-      .then(({ data }) => {
+      .then(({ data }: { data: { username: string | null } | null }) => {
         setUsername(data?.username ?? null)
       })
   }, [user])
