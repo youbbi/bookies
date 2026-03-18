@@ -8,6 +8,7 @@ export type ReadingStatus = 'to_read' | 'reading' | 'read'
 export interface Profile {
   id: string
   display_name: string | null
+  username: string | null
   avatar_url: string | null
   created_at: string
   updated_at: string
@@ -50,6 +51,24 @@ export interface UserBookWithDetails extends UserBook {
   borrowed_from: Profile | null
 }
 
+export type LoanRequestStatus = 'pending' | 'accepted' | 'declined'
+
+export interface LoanRequest {
+  id: string
+  user_book_id: string
+  owner_id: string
+  requester_name: string
+  requester_email: string | null
+  message: string | null
+  status: LoanRequestStatus
+  created_at: string
+  updated_at: string
+}
+
+export interface LoanRequestWithBook extends LoanRequest {
+  user_book: UserBookWithBook
+}
+
 // Database schema type for Supabase client
 export type Database = {
   public: {
@@ -72,12 +91,19 @@ export type Database = {
         Update: Partial<Omit<UserBook, 'id' | 'created_at' | 'updated_at'>>
         Relationships: []
       }
+      loan_requests: {
+        Row: LoanRequest
+        Insert: Omit<LoanRequest, 'id' | 'created_at' | 'updated_at' | 'status'>
+        Update: Partial<Pick<LoanRequest, 'status'>>
+        Relationships: []
+      }
     }
     Views: Record<string, never>
     Functions: Record<string, never>
     Enums: {
       loan_status: LoanStatus
       reading_status: ReadingStatus
+      loan_request_status: LoanRequestStatus
     }
     CompositeTypes: Record<string, never>
   }

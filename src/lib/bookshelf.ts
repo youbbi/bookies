@@ -1,6 +1,15 @@
 import { supabase } from './supabase'
 import type { OpenLibraryBook } from './openLibrary'
-import type { Book, UserBookWithBook, LoanStatus, ReadingStatus } from '@/types'
+import type {
+  Book,
+  Profile,
+  UserBookWithBook,
+  LoanRequest,
+  LoanRequestWithBook,
+  LoanStatus,
+  LoanRequestStatus,
+  ReadingStatus,
+} from '@/types'
 
 // Type for book insert operations
 type BookInsert = {
@@ -182,5 +191,119 @@ export async function updateBookRating(userBookId: string, rating: number | null
 
   if (error) {
     throw new Error(`Erreur lors de la mise à jour de la note: ${error.message}`)
+  }
+}
+
+/**
+ * Get a profile by username (for public shelf)
+ */
+export async function getProfileByUsername(username: string): Promise<Profile | null> {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('username', username)
+    .maybeSingle()
+
+  if (error) {
+    throw new Error(`Erreur lors du chargement du profil: ${error.message}`)
+  }
+
+  return data as Profile | null
+}
+
+/**
+ * Get available books for a user's public shelf
+ */
+export async function getPublicShelfBooks(userId: string): Promise<UserBookWithBook[]> {
+  const { data, error } = await supabase
+    .from('user_books')
+    .select('*, book:books(*)')
+    .eq('user_id', userId)
+    .eq('loan_status', 'available')
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    throw new Error(`Erreur lors du chargement: ${error.message}`)
+  }
+
+  return (data || []) as unknown as UserBookWithBook[]
+}
+
+/**
+ * Create a loan request (works with anon key — no auth required)
+ */
+export async function createLoanRequest(data: {
+  user_book_id: string
+  owner_id: string
+  requester_name: string
+  requester_email?: string
+  message?: string
+}): Promise<LoanRequest> {
+  const { data: request, error } = await supabase
+    .from('loan_requests')
+    .insert({
+      user_book_id: data.user_book_id,
+      owner_id: data.owner_id,
+      requester_name: data.requester_name,
+      requester_email: data.requester_email || null,
+      message: data.message || null,
+    } as never)
+    .select()
+    .single()
+
+  if (error) {
+    throw new Error(`Erreur lors de l'envoi de la demande: ${error.message}`)
+  }
+
+  return request as unknown as LoanRequest
+}
+
+/**
+ * Get pending loan requests for the authenticated owner
+ */
+export async function getMyLoanRequests(ownerId: string): Promise<LoanRequestWithBook[]> {
+  const { data, error } = await supabase
+    .from('loan_requests')
+    .select('*, user_book:user_books(*, book:books(*))')
+    .eq('owner_id', ownerId)
+    .eq('status', 'pending')
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    throw new Error(`Erreur lors du chargement des demandes: ${error.message}`)
+  }
+
+  return (data || []) as unknown as LoanRequestWithBook[]
+}
+
+/**
+ * Update a loan request status (accept/decline)
+ * When accepted, also marks the book as 'lent'
+ */
+export async function updateLoanRequestStatus(
+  requestId: string,
+  status: LoanRequestStatus
+): Promise<void> {
+  const { data: request, error: fetchError } = await supabase
+    .from('loan_requests')
+    .select('user_book_id')
+    .eq('id', requestId)
+    .single()
+
+  if (fetchError) {
+    throw new Error(`Erreur: ${fetchError.message}`)
+  }
+
+  const { error } = await supabase
+    .from('loan_requests')
+    .update({ status } as never)
+    .eq('id', requestId)
+
+  if (error) {
+    throw new Error(`Erreur lors de la mise à jour: ${error.message}`)
+  }
+
+  if (status === 'accepted' && request) {
+    await updateLoanStatus((request as { user_book_id: string }).user_book_id, 'lent')
   }
 }
