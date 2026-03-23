@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { LoanStatus } from '@/types'
+import type { BookFormat, LoanStatus } from '@/types'
 
 type BookCardSize = 'default' | 'small' | 'shelf'
 
@@ -8,6 +8,7 @@ interface BookCardProps {
   author?: string | null
   coverUrl?: string | null
   loanStatus?: LoanStatus
+  bookFormat?: BookFormat
   lentToName?: string | null
   borrowedFromName?: string | null
   onClick?: () => void
@@ -38,7 +39,7 @@ const sizeConfig: Record<
   },
 }
 
-const statusConfig: Record<LoanStatus, { label: string; className: string }> = {
+const loanStatusConfig: Record<LoanStatus, { label: string; className: string }> = {
   available: {
     label: 'Disponible',
     className: 'bg-warm-green text-cream-50',
@@ -53,29 +54,63 @@ const statusConfig: Record<LoanStatus, { label: string; className: string }> = {
   },
 }
 
+const formatBadgeConfig: Record<
+  Exclude<BookFormat, 'physical'>,
+  { label: string; className: string }
+> = {
+  ebook: {
+    label: 'Ebook',
+    className: 'bg-blue-400 text-cream-50',
+  },
+  library: {
+    label: 'Bibliothèque',
+    className: 'bg-stone-400 text-cream-50',
+  },
+}
+
+function getBookBadge(
+  loanStatus: LoanStatus | undefined,
+  bookFormat: BookFormat | undefined
+): { label: string; className: string } | null {
+  // Non-physical formats get their own badge
+  if (bookFormat && bookFormat !== 'physical') {
+    return formatBadgeConfig[bookFormat]
+  }
+  // Physical books (or unknown format) use loan status
+  if (loanStatus) {
+    return loanStatusConfig[loanStatus]
+  }
+  return null
+}
+
 export function BookCard({
   title,
   author,
   coverUrl,
   loanStatus,
+  bookFormat,
   lentToName,
   borrowedFromName,
   onClick,
   size = 'default',
 }: BookCardProps) {
   const [imgFailed, setImgFailed] = useState(false)
-  const status = loanStatus ? statusConfig[loanStatus] : null
+  const badge = getBookBadge(loanStatus, bookFormat)
   const sizes = sizeConfig[size]
 
   const getStatusText = () => {
-    if (!loanStatus || !status) return null
+    if (!badge) return null
+    // For non-physical formats, just show the format label
+    if (bookFormat && bookFormat !== 'physical') {
+      return badge.label
+    }
     if (loanStatus === 'lent' && lentToName) {
       return `Prêté à ${lentToName}`
     }
     if (loanStatus === 'borrowed' && borrowedFromName) {
       return `Emprunté de ${borrowedFromName}`
     }
-    return status.label
+    return badge.label
   }
 
   return (
@@ -106,10 +141,10 @@ export function BookCard({
           </div>
         )}
 
-        {/* Status badge - only show if loanStatus is provided */}
-        {status && (
+        {/* Status badge */}
+        {badge && (
           <div
-            className={`absolute bottom-2 left-2 right-2 px-2 py-1 rounded text-xs font-medium text-center truncate ${status.className}`}
+            className={`absolute bottom-2 left-2 right-2 px-2 py-1 rounded text-xs font-medium text-center truncate ${badge.className}`}
           >
             {getStatusText()}
           </div>

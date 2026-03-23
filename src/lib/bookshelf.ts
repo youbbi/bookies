@@ -2,6 +2,7 @@ import { supabase } from './supabase'
 import type { OpenLibraryBook } from './openLibrary'
 import type {
   Book,
+  BookFormat,
   Profile,
   UserBookWithBook,
   LoanRequest,
@@ -28,6 +29,8 @@ type UserBookInsert = {
   book_id: string
   loan_status: LoanStatus
   reading_status: ReadingStatus
+  book_format: BookFormat
+  location?: string | null
   rating?: number | null
 }
 
@@ -39,7 +42,9 @@ export async function addBookToShelf(
   userId: string,
   openLibraryBook: OpenLibraryBook,
   readingStatus: ReadingStatus = 'reading',
-  rating?: number | null
+  rating?: number | null,
+  bookFormat: BookFormat = 'physical',
+  location?: string | null
 ): Promise<UserBookWithBook> {
   // First, check if book already exists by open_library_id
   let book: Book | null = null
@@ -96,6 +101,8 @@ export async function addBookToShelf(
     book_id: book.id,
     loan_status: 'available',
     reading_status: readingStatus,
+    book_format: bookFormat,
+    location: location ?? null,
     rating: rating ?? null,
   }
 
@@ -220,6 +227,7 @@ export async function getPublicShelfBooks(userId: string): Promise<UserBookWithB
     .select('*, book:books(*)')
     .eq('user_id', userId)
     .eq('loan_status', 'available')
+    .eq('book_format', 'physical')
     .order('created_at', { ascending: false })
 
   if (error) {
@@ -305,5 +313,52 @@ export async function updateLoanRequestStatus(
 
   if (status === 'accepted' && request) {
     await updateLoanStatus((request as { user_book_id: string }).user_book_id, 'lent')
+  }
+}
+
+/**
+ * Update the format and location of a book
+ * If changing away from physical, resets loan status and clears lent_to_user_id
+ */
+export async function updateBookFormat(
+  userBookId: string,
+  bookFormat: BookFormat,
+  location: string | null
+): Promise<void> {
+  const updateData: Record<string, unknown> = {
+    book_format: bookFormat,
+    location: bookFormat === 'physical' ? location : null,
+  }
+
+  // Non-physical books cannot be lent
+  if (bookFormat !== 'physical') {
+    updateData.loan_status = 'available'
+    updateData.lent_to_user_id = null
+  }
+
+  const { error } = await supabase
+    .from('user_books')
+    .update(updateData as never)
+    .eq('id', userBookId)
+
+  if (error) {
+    throw new Error(`Erreur lors de la mise à jour du format: ${error.message}`)
+  }
+}
+
+/**
+ * Update the location of a physical book
+ */
+export async function updateBookLocation(
+  userBookId: string,
+  location: string | null
+): Promise<void> {
+  const { error } = await supabase
+    .from('user_books')
+    .update({ location } as never)
+    .eq('id', userBookId)
+
+  if (error) {
+    throw new Error(`Erreur lors de la mise à jour de l'emplacement: ${error.message}`)
   }
 }

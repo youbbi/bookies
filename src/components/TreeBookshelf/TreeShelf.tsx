@@ -30,6 +30,7 @@ export function TreeShelf({ position, label, books, onBookClick }: TreeShelfProp
               author={userBook.book.author}
               coverUrl={userBook.book.cover_url}
               loanStatus={showLoanStatus ? userBook.loan_status : undefined}
+              bookFormat={showLoanStatus ? userBook.book_format : undefined}
               onClick={() => onBookClick?.(userBook)}
               size="shelf"
             />

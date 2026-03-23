@@ -8,6 +8,7 @@ export type {
   UserBookWithDetails,
   LoanStatus,
   ReadingStatus,
+  BookFormat,
   LoanRequest,
   LoanRequestWithBook,
   LoanRequestStatus,

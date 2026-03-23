@@ -64,6 +64,8 @@ const makeUserBook = (overrides: Partial<UserBookWithBook> = {}): UserBookWithBo
   book_id: 'book-1',
   loan_status: 'available',
   reading_status: 'read',
+  book_format: 'physical',
+  location: null,
   rating: null,
   lent_to_user_id: null,
   borrowed_from_user_id: null,
