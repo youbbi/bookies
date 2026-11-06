@@ -188,7 +188,11 @@ function ScannerContent({
 
         {/* Scanner viewport */}
         <div className="relative bg-black aspect-[4/3] overflow-hidden">
-          <div ref={scannerRef} data-testid="scanner-viewport" className="w-full h-full [&>video]:object-cover [&>video]:w-full [&>video]:h-full [&>canvas]:hidden" />
+          <div
+            ref={scannerRef}
+            data-testid="scanner-viewport"
+            className="w-full h-full [&>video]:object-cover [&>video]:w-full [&>video]:h-full [&>canvas]:hidden"
+          />
 
           {/* Scanning overlay */}
           {isInitialized && !error && (
