@@ -1,6 +1,11 @@
 import { useState } from 'react'
-import type { UserBookWithBook, ReadingStatus } from '@/types'
-import { updateReadingStatus, updateBookRating } from '@/lib/bookshelf'
+import type { UserBookWithBook, ReadingStatus, BookFormat } from '@/types'
+import {
+  updateReadingStatus,
+  updateBookRating,
+  updateBookFormat,
+  updateBookLocation,
+} from '@/lib/bookshelf'
 import { StarRating } from './StarRating'
 
 interface BookActionModalProps {
@@ -9,6 +14,8 @@ interface BookActionModalProps {
   onRemove: (userBookId: string) => Promise<void>
   onStatusChange?: (userBookId: string, newStatus: ReadingStatus) => void
   onRatingChange?: (userBookId: string, newRating: number | null) => void
+  onFormatChange?: (userBookId: string, newFormat: BookFormat, newLocation: string | null) => void
+  onLocationChange?: (userBookId: string, newLocation: string | null) => void
 }
 
 const readingStatusLabels: Record<ReadingStatus, string> = {
@@ -19,17 +26,36 @@ const readingStatusLabels: Record<ReadingStatus, string> = {
 
 const allStatuses: ReadingStatus[] = ['to_read', 'reading', 'read']
 
+const bookFormatLabels: Record<BookFormat, string> = {
+  physical: 'Physique',
+  ebook: 'Ebook',
+  library: 'Bibliothèque',
+}
+
+const allFormats: BookFormat[] = ['physical', 'ebook', 'library']
+
 export function BookActionModal({
   book,
   onClose,
   onRemove,
   onStatusChange,
   onRatingChange,
+  onFormatChange,
+  onLocationChange,
 }: BookActionModalProps) {
   const [isRemoving, setIsRemoving] = useState(false)
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false)
   const [isUpdatingRating, setIsUpdatingRating] = useState(false)
+  const [isUpdatingFormat, setIsUpdatingFormat] = useState(false)
+  const [locationInput, setLocationInput] = useState('')
+  const [locationInitialized, setLocationInitialized] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Initialize location input when book changes
+  if (book && !locationInitialized) {
+    setLocationInput(book.location || '')
+    setLocationInitialized(true)
+  }
 
   if (!book) return null
 
@@ -70,6 +96,34 @@ export function BookActionModal({
       setError(err instanceof Error ? err.message : 'Une erreur est survenue')
     } finally {
       setIsUpdatingRating(false)
+    }
+  }
+
+  const handleFormatChange = async (newFormat: BookFormat) => {
+    if (newFormat === book.book_format) return
+    try {
+      setIsUpdatingFormat(true)
+      setError(null)
+      const newLocation = newFormat === 'physical' ? locationInput || null : null
+      await updateBookFormat(book.id, newFormat, newLocation)
+      onFormatChange?.(book.id, newFormat, newLocation)
+      onClose()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Une erreur est survenue')
+    } finally {
+      setIsUpdatingFormat(false)
+    }
+  }
+
+  const handleLocationBlur = async () => {
+    const newLocation = locationInput.trim() || null
+    if (newLocation === (book.location || null)) return
+    try {
+      setError(null)
+      await updateBookLocation(book.id, newLocation)
+      onLocationChange?.(book.id, newLocation)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Une erreur est survenue')
     }
   }
 
@@ -149,6 +203,46 @@ export function BookActionModal({
             ))}
           </div>
         </div>
+
+        {/* Book format selector */}
+        <div className="px-4 pb-4">
+          <p className="text-sm text-muted mb-2">Format:</p>
+          <div className="flex gap-2">
+            {allFormats.map((format) => (
+              <button
+                key={format}
+                type="button"
+                onClick={() => handleFormatChange(format)}
+                disabled={isUpdatingFormat || format === book.book_format}
+                className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${
+                  format === book.book_format
+                    ? 'bg-wood-500 text-white'
+                    : 'bg-cream-200 text-wood-500 hover:bg-cream-300'
+                }`}
+              >
+                {bookFormatLabels[format]}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Location input (only for physical books) */}
+        {book.book_format === 'physical' && (
+          <div className="px-4 pb-4">
+            <label htmlFor="book-location" className="text-sm text-muted mb-2 block">
+              Emplacement:
+            </label>
+            <input
+              id="book-location"
+              type="text"
+              value={locationInput}
+              onChange={(e) => setLocationInput(e.target.value)}
+              onBlur={handleLocationBlur}
+              placeholder="ex: Salon, étagère du haut"
+              className="w-full px-3 py-2 rounded-lg border border-cream-300 bg-cream-50 text-wood-600 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+            />
+          </div>
+        )}
 
         {/* Error message */}
         {error && (

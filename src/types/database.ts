@@ -5,6 +5,8 @@ export type LoanStatus = 'available' | 'lent' | 'borrowed'
 
 export type ReadingStatus = 'to_read' | 'reading' | 'read'
 
+export type BookFormat = 'physical' | 'ebook' | 'library'
+
 export interface Profile {
   id: string
   display_name: string | null
@@ -33,6 +35,8 @@ export interface UserBook {
   book_id: string
   loan_status: LoanStatus
   reading_status: ReadingStatus
+  book_format: BookFormat
+  location: string | null
   rating: number | null
   lent_to_user_id: string | null
   borrowed_from_user_id: string | null
@@ -103,6 +107,7 @@ export type Database = {
     Enums: {
       loan_status: LoanStatus
       reading_status: ReadingStatus
+      book_format: BookFormat
       loan_request_status: LoanRequestStatus
     }
     CompositeTypes: Record<string, never>

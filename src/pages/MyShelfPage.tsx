@@ -18,7 +18,7 @@ import {
 import { supabase } from '@/lib/supabase'
 import { lookupByIsbn } from '@/lib/openLibrary'
 import { importGoodReadsLibrary, type ImportResult } from '@/lib/goodreadsImport'
-import type { UserBookWithBook, LoanRequestWithBook, ReadingStatus } from '@/types'
+import type { UserBookWithBook, LoanRequestWithBook, ReadingStatus, BookFormat } from '@/types'
 
 export function MyShelfPage() {
   const { user, loading: authLoading } = useAuthContext()
@@ -102,6 +102,32 @@ export function MyShelfPage() {
   const handleRatingChange = useCallback((userBookId: string, newRating: number | null) => {
     setBooks((prev) => prev.map((b) => (b.id === userBookId ? { ...b, rating: newRating } : b)))
     setSelectedBook((prev) => (prev?.id === userBookId ? { ...prev, rating: newRating } : prev))
+  }, [])
+
+  const handleFormatChange = useCallback(
+    (userBookId: string, newFormat: BookFormat, newLocation: string | null) => {
+      setBooks((prev) =>
+        prev.map((b) =>
+          b.id === userBookId
+            ? {
+                ...b,
+                book_format: newFormat,
+                location: newLocation,
+                // Non-physical books can't be lent
+                ...(newFormat !== 'physical'
+                  ? { loan_status: 'available' as const, lent_to_user_id: null }
+                  : {}),
+              }
+            : b
+        )
+      )
+    },
+    []
+  )
+
+  const handleLocationChange = useCallback((userBookId: string, newLocation: string | null) => {
+    setBooks((prev) => prev.map((b) => (b.id === userBookId ? { ...b, location: newLocation } : b)))
+    setSelectedBook((prev) => (prev?.id === userBookId ? { ...prev, location: newLocation } : prev))
   }, [])
 
   const handleAddBook = useCallback(
@@ -310,6 +336,8 @@ export function MyShelfPage() {
         onRemove={handleRemoveBook}
         onStatusChange={handleStatusChange}
         onRatingChange={handleRatingChange}
+        onFormatChange={handleFormatChange}
+        onLocationChange={handleLocationChange}
       />
 
       <BarcodeScannerModal
