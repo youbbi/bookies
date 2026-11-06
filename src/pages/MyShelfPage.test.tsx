@@ -15,6 +15,21 @@ vi.mock('@/contexts/AuthContext', () => ({
 // Mock bookshelf lib
 vi.mock('@/lib/bookshelf', () => ({
   getUserBooks: vi.fn(),
+  getMyLoanRequests: vi.fn().mockResolvedValue([]),
+}))
+
+// Mock supabase profile lookup (username)
+const mockProfile = vi.hoisted(() => ({ username: 'testuser' as string | null }))
+vi.mock('@/lib/supabase', () => ({
+  supabase: {
+    from: () => ({
+      select: () => ({
+        eq: () => ({
+          single: () => Promise.resolve({ data: { username: mockProfile.username } }),
+        }),
+      }),
+    }),
+  },
 }))
 
 // Mock PNG imports
@@ -71,6 +86,8 @@ const renderWithRouter = (component: React.ReactNode) => {
 describe('MyShelfPage', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    mockProfile.username = 'testuser'
+    vi.mocked(bookshelfLib.getMyLoanRequests).mockResolvedValue([])
   })
 
   describe('when user is not authenticated', () => {
@@ -127,7 +144,7 @@ describe('MyShelfPage', () => {
       })
     })
 
-    it('displays books in TreeBookshelf', async () => {
+    it('displays books in their sections', async () => {
       const mockBooks = [
         createMockBook('1', 'Reading Book', 'reading'),
         createMockBook('2', 'Finished Book', 'read'),
@@ -148,7 +165,18 @@ describe('MyShelfPage', () => {
       renderWithRouter(<MyShelfPage />)
 
       await waitFor(() => {
-        expect(screen.getAllByText(/glissez un livre/i).length).toBeGreaterThan(0)
+        expect(screen.getByText(/aucun livre en cours/i)).toBeInTheDocument()
+      })
+    })
+
+    it('prompts for a username when the profile has none', async () => {
+      mockProfile.username = null
+      vi.mocked(bookshelfLib.getUserBooks).mockResolvedValue([])
+
+      renderWithRouter(<MyShelfPage />)
+
+      await waitFor(() => {
+        expect(screen.getByRole('textbox')).toBeInTheDocument()
       })
     })
 

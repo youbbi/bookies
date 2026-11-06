@@ -205,81 +205,106 @@ describe('GoodReads RSS Fetch Service', () => {
     <user_rating>4</user_rating>
   </item>`
 
+  const xmlResponse = (body: string) => ({
+    ok: true,
+    status: 200,
+    headers: new Headers({ 'content-type': 'application/xml' }),
+    text: () => Promise.resolve(body),
+  })
+
+  const errorResponse = (status: number) => ({
+    ok: false,
+    status,
+    headers: new Headers(),
+    text: () => Promise.resolve(''),
+  })
+
+  /**
+   * Route mocked fetches by shelf + page. Each shelf maps to a list of page
+   * bodies (page 1 first); pages past the end return an empty feed, which
+   * stops pagination. A number instead of a list means "fail with that status".
+   */
+  const mockShelves = (shelves: Record<string, string[] | number>) => {
+    mockFetch.mockImplementation((url: string) => {
+      const params = new URL(url, 'http://localhost').searchParams
+      const shelf = shelves[params.get('shelf') ?? '']
+      const page = Number(params.get('page'))
+      if (typeof shelf === 'number') return Promise.resolve(errorResponse(shelf))
+      const body = shelf?.[page - 1] ?? ''
+      return Promise.resolve(xmlResponse(makeRssResponse(body)))
+    })
+  }
+
   beforeEach(() => {
-    mockFetch.mockClear()
+    mockFetch.mockReset()
   })
 
   it('fetches books from all three shelves', async () => {
-    // Mock three shelf responses
-    mockFetch
-      .mockResolvedValueOnce({
-        ok: true,
-        text: () => Promise.resolve(makeRssResponse(bookItem('Read Book', '1111111111'))),
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        text: () => Promise.resolve(makeRssResponse(bookItem('Reading Book', '2222222222'))),
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        text: () => Promise.resolve(makeRssResponse(bookItem('Want Book', '3333333333'))),
-      })
+    mockShelves({
+      read: [bookItem('Read Book', '1111111111')],
+      'currently-reading': [bookItem('Reading Book', '2222222222')],
+      'to-read': [bookItem('Want Book', '3333333333')],
+    })
 
     const result = await fetchGoodReadsBooks('12345')
 
-    expect(mockFetch).toHaveBeenCalledTimes(3)
+    // One page with books + one empty page per shelf
+    expect(mockFetch).toHaveBeenCalledTimes(6)
     expect(result).toHaveLength(3)
     expect(result[0].shelf).toBe('read')
     expect(result[1].shelf).toBe('currently-reading')
     expect(result[2].shelf).toBe('to-read')
   })
 
-  it('constructs correct RSS feed URLs with proxy prefix', async () => {
-    mockFetch.mockResolvedValue({
-      ok: true,
-      text: () => Promise.resolve(makeRssResponse('')),
+  it('follows pagination until an empty page', async () => {
+    mockShelves({
+      read: [bookItem('Page 1', '1111111111'), bookItem('Page 2', '4444444444')],
     })
+
+    const result = await fetchGoodReadsBooks('12345')
+
+    expect(result.map((b) => b.title)).toEqual(['Page 1', 'Page 2'])
+    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('shelf=read&page=3'))
+  })
+
+  it('calls the API proxy with userId, shelf and page', async () => {
+    mockShelves({})
 
     await fetchGoodReadsBooks('12345')
 
-    expect(mockFetch).toHaveBeenCalledWith(
-      expect.stringContaining('/review/list_rss/12345?shelf=read')
-    )
-    expect(mockFetch).toHaveBeenCalledWith(
-      expect.stringContaining('/review/list_rss/12345?shelf=currently-reading')
-    )
-    expect(mockFetch).toHaveBeenCalledWith(
-      expect.stringContaining('/review/list_rss/12345?shelf=to-read')
-    )
+    for (const shelf of ['read', 'currently-reading', 'to-read']) {
+      expect(mockFetch).toHaveBeenCalledWith(`/api/goodreads?userId=12345&shelf=${shelf}&page=1`)
+    }
   })
 
   it('returns empty array when all shelves fail', async () => {
-    mockFetch.mockResolvedValue({
-      ok: false,
-      status: 404,
-    })
+    mockShelves({ read: 404, 'currently-reading': 404, 'to-read': 404 })
 
     const result = await fetchGoodReadsBooks('99999')
     expect(result).toEqual([])
   })
 
   it('returns partial results when some shelves fail', async () => {
-    mockFetch
-      .mockResolvedValueOnce({
-        ok: true,
-        text: () => Promise.resolve(makeRssResponse(bookItem('Read Book', '1111111111'))),
-      })
-      .mockResolvedValueOnce({
-        ok: false,
-        status: 403,
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        text: () => Promise.resolve(makeRssResponse(bookItem('Want Book', '3333333333'))),
-      })
+    mockShelves({
+      read: [bookItem('Read Book', '1111111111')],
+      'currently-reading': 403,
+      'to-read': [bookItem('Want Book', '3333333333')],
+    })
 
     const result = await fetchGoodReadsBooks('12345')
     expect(result).toHaveLength(2)
+  })
+
+  it('ignores HTML responses (SPA fallback)', async () => {
+    mockFetch.mockResolvedValue({
+      ok: true,
+      status: 200,
+      headers: new Headers({ 'content-type': 'text/html' }),
+      text: () => Promise.resolve('<!doctype html><html></html>'),
+    })
+
+    const result = await fetchGoodReadsBooks('12345')
+    expect(result).toEqual([])
   })
 
   it('handles network errors gracefully', async () => {

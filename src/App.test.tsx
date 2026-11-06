@@ -22,6 +22,20 @@ vi.mock('@/contexts/AuthContext', () => ({
 // Mock bookshelf lib
 vi.mock('@/lib/bookshelf', () => ({
   getUserBooks: vi.fn(),
+  getMyLoanRequests: vi.fn().mockResolvedValue([]),
+}))
+
+// Mock supabase profile lookup (username)
+vi.mock('@/lib/supabase', () => ({
+  supabase: {
+    from: () => ({
+      select: () => ({
+        eq: () => ({
+          single: () => Promise.resolve({ data: { username: 'testuser' } }),
+        }),
+      }),
+    }),
+  },
 }))
 
 const mockUser: Partial<User> = {
@@ -55,27 +69,32 @@ describe('App', () => {
         loading: false,
       })
       vi.mocked(bookshelfLib.getUserBooks).mockResolvedValue([])
+      vi.mocked(bookshelfLib.getMyLoanRequests).mockResolvedValue([])
     })
 
-    it('renders the app title', async () => {
+    it('renders the header with the user display name', async () => {
       renderApp()
       await waitFor(() => {
-        expect(screen.getByText('Bookies')).toBeInTheDocument()
+        expect(screen.getByText('test')).toBeInTheDocument()
+        expect(screen.getByRole('button', { name: /déconnexion/i })).toBeInTheDocument()
       })
     })
 
-    it('renders the tagline in French', async () => {
+    it('renders the share button once the username is loaded', async () => {
       renderApp()
       await waitFor(() => {
-        expect(screen.getByText('Partagez vos livres avec vos proches')).toBeInTheDocument()
+        expect(
+          screen.getByRole('button', { name: /partager ma bibliothèque/i })
+        ).toBeInTheDocument()
       })
     })
 
-    it('renders the tree bookshelf', async () => {
+    it('renders the currently-reading tree and shelf sections', async () => {
       renderApp()
       await waitFor(() => {
-        expect(screen.getByText('En cours')).toBeInTheDocument()
-        expect(screen.getByText('Mes coups de cœur')).toBeInTheDocument()
+        expect(screen.getByText('En cours de lecture')).toBeInTheDocument()
+        expect(screen.getByText('À lire')).toBeInTheDocument()
+        expect(screen.getByText('Lus')).toBeInTheDocument()
       })
     })
   })
